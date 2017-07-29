@@ -1,0 +1,60 @@
+apply plugin: "java"
+
+def signFile = "../.gradle/sign.gradle"
+if (file(signFile).exists()) {
+    apply from: signFile
+}
+
+targetCompatibility = 1.8
+sourceCompatibility = 1.8
+
+group = "io.github.lxgaming.clearlag"
+archivesBaseName = "ClearLag"
+version = "1.0.0-BETA"
+
+configurations {
+    provided {
+        compile.extendsFrom(provided)
+    }
+
+    build {
+        if (project.tasks.findByName("signJar")) {
+            return finalizedBy(signJar)
+        }
+
+        return doLast {
+            println("========== [WARNING] ==========")
+            println()
+            println("   This build is not signed!   ")
+            println()
+            println("========== [WARNING] ==========")
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url("https://repo.spongepowered.org/maven")
+    }
+}
+
+dependencies {
+    provided("org.spongepowered:spongeapi:5.+")
+}
+
+jar {
+    from {
+        (configurations.compile - configurations.provided).collect {
+            if (it.isDirectory()) {
+                return it
+            }
+            return zipTree(it)
+        }
+    }
+}
+
+processResources {
+    from("LICENSE")
+    rename("LICENSE", "LICENSE-" + archivesBaseName)
+}
