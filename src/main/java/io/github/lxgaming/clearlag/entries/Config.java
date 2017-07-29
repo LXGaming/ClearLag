@@ -28,6 +28,7 @@ public class Config {
 	private int itemLimit;
 	private List<String> itemList;
 	private String itemListType;
+	private boolean itemWarnings;
 	private List<Integer> itemWarningIntervals;
 	private String itemClearedMessage;
 	private String itemLimitedMessage;
@@ -39,6 +40,7 @@ public class Config {
 	private int mobLimitPerChunk;
 	private List<String> mobList;
 	private String mobListType;
+	private boolean mobWarnings;
 	private List<Integer> mobWarningIntervals;
 	private String mobClearedMessage;
 	private String mobLimitedMessage;
@@ -82,6 +84,14 @@ public class Config {
 	
 	public void setItemListType(String itemListType) {
 		this.itemListType = itemListType;
+	}
+	
+	public boolean isItemWarnings() {
+		return itemWarnings;
+	}
+	
+	public void setItemWarnings(boolean itemWarnings) {
+		this.itemWarnings = itemWarnings;
 	}
 	
 	public List<Integer> getItemWarningIntervals() {
@@ -154,6 +164,14 @@ public class Config {
 	
 	public void setMobListType(String mobListType) {
 		this.mobListType = mobListType;
+	}
+	
+	public boolean isMobWarnings() {
+		return mobWarnings;
+	}
+	
+	public void setMobWarnings(boolean mobWarnings) {
+		this.mobWarnings = mobWarnings;
 	}
 	
 	public List<Integer> getMobWarningIntervals() {

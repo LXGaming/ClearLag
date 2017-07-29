@@ -55,6 +55,7 @@ public class Configuration {
 			getConfig().setItemLimit(getConfigurationNode().getNode("items", "limit").getInt(0));
 			getConfig().setItemList(getConfigurationNode().getNode("items", "list").getList(TypeToken.of(String.class), Lists.newArrayList()));
 			getConfig().setItemListType(getConfigurationNode().getNode("items", "listType").getString("WHITELIST"));
+			getConfig().setItemWarnings(getConfigurationNode().getNode("items", "warnings").getBoolean(true));
 			getConfig().setItemWarningIntervals(getConfigurationNode().getNode("items", "warningIntervals").getList(TypeToken.of(Integer.class), Lists.newArrayList(60000, 30000, 15000, 5000)));
 			getConfig().setItemClearedMessage(getConfigurationNode().getNode("items", "clearedMessage").getString("&f&l[COUNT] &8items have been cleared!"));
 			getConfig().setItemLimitedMessage(getConfigurationNode().getNode("items", "limitedMessage").getString("&8Skipping item removal."));
@@ -66,6 +67,7 @@ public class Configuration {
 			getConfig().setMobLimitPerChunk(getConfigurationNode().getNode("mobs", "limitPerChunk").getInt(25));
 			getConfig().setMobList(getConfigurationNode().getNode("mobs", "list").getList(TypeToken.of(String.class), Lists.newArrayList()));
 			getConfig().setMobListType(getConfigurationNode().getNode("mobs", "listType").getString("WHITELIST"));
+			getConfig().setMobWarnings(getConfigurationNode().getNode("mobs", "warnings").getBoolean(true));
 			getConfig().setMobWarningIntervals(getConfigurationNode().getNode("mobs", "warningIntervals").getList(TypeToken.of(Integer.class), Lists.newArrayList(60000, 30000, 15000, 5000)));
 			getConfig().setMobClearedMessage(getConfigurationNode().getNode("mobs", "clearedMessage").getString("&f&l[COUNT] &8mobs have been cleared!"));
 			getConfig().setMobLimitedMessage(getConfigurationNode().getNode("mobs", "limitedMessage").getString("&8Skipping mob removal."));
@@ -88,6 +90,7 @@ public class Configuration {
 			getConfigurationNode().getNode("items", "limit").setValue(getConfig().getItemLimit());
 			getConfigurationNode().getNode("items", "list").setValue(getConfig().getItemList().stream().sorted().collect(Collectors.toList()));
 			getConfigurationNode().getNode("items", "listType").setValue(getConfig().getItemListType());
+			getConfigurationNode().getNode("items", "warnings").setValue(getConfig().isItemWarnings());
 			getConfigurationNode().getNode("items", "warningIntervals").setValue(getConfig().getItemWarningIntervals());
 			getConfigurationNode().getNode("items", "clearedMessage").setValue(getConfig().getItemClearedMessage());
 			getConfigurationNode().getNode("items", "warningMessage").setValue(getConfig().getItemWarningMessage());
@@ -98,6 +101,7 @@ public class Configuration {
 			getConfigurationNode().getNode("mobs", "limitPerChunk").setValue(getConfig().getMobLimitPerChunk());
 			getConfigurationNode().getNode("mobs", "list").setValue(getConfig().getMobList().stream().sorted().collect(Collectors.toList()));
 			getConfigurationNode().getNode("mobs", "listType").setValue(getConfig().getMobListType());
+			getConfigurationNode().getNode("mobs", "warnings").setValue(getConfig().isMobWarnings());
 			getConfigurationNode().getNode("mobs", "warningIntervals").setValue(getConfig().getMobWarningIntervals());
 			getConfigurationNode().getNode("mobs", "clearedMessage").setValue(getConfig().getMobClearedMessage());
 			getConfigurationNode().getNode("mobs", "warningMessage").setValue(getConfig().getMobWarningMessage());

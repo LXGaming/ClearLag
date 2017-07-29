@@ -10,7 +10,7 @@ sourceCompatibility = 1.8
 
 group = "io.github.lxgaming.clearlag"
 archivesBaseName = "ClearLag"
-version = "1.0.0-BETA"
+version = "1.0.1-BETA"
 
 configurations {
     provided {

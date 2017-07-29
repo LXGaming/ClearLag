@@ -47,10 +47,12 @@ public class ClearLagOperation extends Operation {
 		}
 		
 		if (ClearLag.getInstance().getConfig().getItemInterval() > 0) {
-			broadcastMessage("Item",
-					ClearLag.getInstance().getConfig().getItemWarningMessage(),
-					ClearLag.getInstance().getConfig().getItemWarningIntervals(),
-					ClearLag.getInstance().getConfig().getItemInterval());
+			if (ClearLag.getInstance().getConfig().isItemWarnings()) {
+				broadcastMessage("Item",
+						ClearLag.getInstance().getConfig().getItemWarningMessage(),
+						ClearLag.getInstance().getConfig().getItemWarningIntervals(),
+						ClearLag.getInstance().getConfig().getItemInterval());
+			}
 			
 			if (getLastRunTimes().getOrDefault("Item", 0L) < (System.currentTimeMillis() - ClearLag.getInstance().getConfig().getItemInterval())) {
 				ClearLag.getInstance().getEntityManager().removeItems();
@@ -60,10 +62,12 @@ public class ClearLagOperation extends Operation {
 		}
 		
 		if (ClearLag.getInstance().getConfig().getMobInterval() > 0) {
-			broadcastMessage("Mob",
-					ClearLag.getInstance().getConfig().getMobWarningMessage(),
-					ClearLag.getInstance().getConfig().getMobWarningIntervals(),
-					ClearLag.getInstance().getConfig().getMobInterval());
+			if (ClearLag.getInstance().getConfig().isMobWarnings()) {
+				broadcastMessage("Mob",
+						ClearLag.getInstance().getConfig().getMobWarningMessage(),
+						ClearLag.getInstance().getConfig().getMobWarningIntervals(),
+						ClearLag.getInstance().getConfig().getMobInterval());
+			}
 			
 			if (getLastRunTimes().getOrDefault("Mob", 0L) < (System.currentTimeMillis() - ClearLag.getInstance().getConfig().getMobInterval())) {
 				ClearLag.getInstance().getEntityManager().removeMobs();
