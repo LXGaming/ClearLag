@@ -13,6 +13,4 @@ before_script:
 script: ./gradlew clean build
 
 notifications:
-  email:
-    on_success: change
-    on_failure: change
+  email: false
