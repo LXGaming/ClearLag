@@ -39,11 +39,10 @@ public class RegistryManager {
 	
 	public void register() {
 		registerCommand(new ClearLagCommand());
-		registerListener(new EntityManager());
 		registerOperation(new ClearLagOperation());
 	}
 	
-	private void registerCommand(Command command) {
+	public void registerCommand(Command command) {
 		if (command == null) {
 			ClearLag.getInstance().getLogger().warn("Provided command is null!");
 			return;
@@ -52,7 +51,7 @@ public class RegistryManager {
 		Sponge.getCommandManager().register(ClearLag.getInstance(), generateSpongeCommand(command, new ArrayList<String>()).build(), getAliases(command));
 	}
 	
-	private void registerListener(Object object) {
+	public void registerListener(Object object) {
 		if (object == null) {
 			ClearLag.getInstance().getLogger().warn("Provided listener is null!");
 			return;
@@ -61,7 +60,7 @@ public class RegistryManager {
 		Sponge.getEventManager().registerListeners(ClearLag.getInstance(), object);
 	}
 	
-	private void registerOperation(Operation operation) {
+	public void registerOperation(Operation operation) {
 		if (operation == null) {
 			ClearLag.getInstance().getLogger().warn("Provided operation is null!");
 			return;

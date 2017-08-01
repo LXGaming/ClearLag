@@ -17,6 +17,7 @@
 package io.github.lxgaming.clearlag.commands.item;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +27,8 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.args.GenericArguments;
+import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -44,7 +47,7 @@ public class ItemRemoveCommand extends Command {
 		String item = args.<String>getOne("item").orElse("");
 		boolean ignoreVariant = args.<Boolean>getOne("ignoreVariant").orElse(false);
 		
-		if ((StringUtils.isBlank(item) || item.equalsIgnoreCase("hand")) && src instanceof Player) {
+		if (item.equalsIgnoreCase("hand") && src instanceof Player) {
 			Player player = (Player) src;
 			ItemStack itemStack = player.getItemInHand(HandTypes.MAIN_HAND).orElse(null);
 			if (itemStack == null) {
@@ -53,16 +56,17 @@ public class ItemRemoveCommand extends Command {
 			}
 			
 			EntityData entityData = new EntityData();
-			entityData.populate(itemStack.toContainer());
+			DataContainer dataContainer = itemStack.toContainer();
+			entityData.populate(dataContainer.getString(DataQuery.of("ItemType")).orElse("") + ":" + dataContainer.getInt(DataQuery.of("UnsafeDamage")).orElse(0));
 			if (ignoreVariant) {
-				item = String.join(":", entityData.getModId(), entityData.getId());
+				item = String.join(":", entityData.getModId(), entityData.getEntityId());
 			} else {
-				item = String.join(":", entityData.getModId(), entityData.getId(), "" + entityData.getVariant());
+				item = String.join(":", entityData.getModId(), entityData.getEntityId(), "" + entityData.getVariant());
 			}
 		}
 		
 		if (StringUtils.isBlank(item)) {
-			src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.RED, "Item Id not provided!"));
+			src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.RED, "Item Id is not present!"));
 			return CommandResult.success();
 		}
 		
@@ -71,7 +75,13 @@ public class ItemRemoveCommand extends Command {
 			return CommandResult.success();
 		}
 		
-		ClearLag.getInstance().getConfig().getItemList().remove(item);
+		for (Iterator<String> iterator = ClearLag.getInstance().getConfig().getItemList().iterator(); iterator.hasNext();) {
+			String string = iterator.next();
+			if (StringUtils.isBlank(string) || string.equals(item)) {
+				iterator.remove();
+			}
+		}
+		
 		ClearLag.getInstance().getConfiguration().saveConfiguration();
 		src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.GREEN, "Successfully removed ", TextColors.AQUA, item));
 		return CommandResult.success();
@@ -84,13 +94,13 @@ public class ItemRemoveCommand extends Command {
 	
 	@Override
 	public String getUsage() {
-		return getName() + " [Item Id | Hand] [Ignore Variant]";
+		return "<Item Id | Hand> [Ignore Variant]";
 	}
 	
 	@Override
 	public List<CommandElement> getArguments() {
 		return Arrays.asList(
-				GenericArguments.optional(GenericArguments.string(Text.of("item"))),
+				GenericArguments.string(Text.of("item")),
 				GenericArguments.optional(GenericArguments.bool(Text.of("ignoreVariant"))));
 	}
 }

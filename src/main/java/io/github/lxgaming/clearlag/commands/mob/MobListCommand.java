@@ -1,5 +1,5 @@
 /*
-xxxxx * Copyright 2017 Alex Thomson
+ * Copyright 2017 Alex Thomson
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,21 @@ xxxxx * Copyright 2017 Alex Thomson
 
 package io.github.lxgaming.clearlag.commands.mob;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
 import io.github.lxgaming.clearlag.ClearLag;
 import io.github.lxgaming.clearlag.commands.Command;
+import io.github.lxgaming.clearlag.util.Reference;
 import io.github.lxgaming.clearlag.util.SpongeHelper;
 
 public class MobListCommand extends Command {
@@ -33,22 +38,29 @@ public class MobListCommand extends Command {
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if (ClearLag.getInstance().getConfig().getMobList().isEmpty()) {
-			src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.DARK_RED, "Mob list is empty!"));
+			src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.RED, "Mob list is empty!"));
 			return CommandResult.success();
 		}
 		
-		Text.Builder textBuilder = Text.builder();
-		textBuilder.append(Text.of(TextColors.DARK_GREEN, "Mobs:"));
+		String command = "/" + Reference.PLUGIN_NAME + " Mob Remove [ID]";
+		List<Text> texts = new ArrayList<Text>();
 		for (String string : ClearLag.getInstance().getConfig().getMobList()) {
-			if (!SpongeHelper.isCatalogTypePresent(EntityType.class, string)) {
-				textBuilder.append(Text.of(Text.NEW_LINE, TextColors.RED, string));
-				continue;
+			Text.Builder textBuilder = Text.builder();
+			textBuilder.onClick(TextActions.suggestCommand(command.replace("[ID]", string)));
+			textBuilder.onHover(TextActions.showText(Text.of(command.replace("[ID]", string))));
+			if (SpongeHelper.isCatalogTypePresent(EntityType.class, string)) {
+				textBuilder.append(Text.of(TextColors.GREEN, string));
+			} else {
+				textBuilder.append(Text.of(TextColors.RED, string));
 			}
 			
-			textBuilder.append(Text.of(Text.NEW_LINE, TextColors.GREEN, string));
+			texts.add(textBuilder.build());
 		}
 		
-		src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), textBuilder.build()));
+		if (!SpongeHelper.buildPagination(src, Text.of(TextColors.DARK_GREEN, "Mobs:"), texts)) {
+			src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.RED, "No help available!"));
+		}
+		
 		return CommandResult.success();
 	}
 	

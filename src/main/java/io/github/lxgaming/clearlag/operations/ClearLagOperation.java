@@ -37,7 +37,7 @@ public class ClearLagOperation extends Operation {
 	
 	@Override
 	public void run() {
-		if (ClearLag.getInstance().getConfig() == null || Sponge.getGame().getState() != null && !Sponge.getGame().getState().equals(GameState.SERVER_STARTED)) {
+		if (ClearLag.getInstance().getConfig() == null || Sponge.getGame().getState() == null || !Sponge.getGame().getState().equals(GameState.SERVER_STARTED)) {
 			return;
 		}
 		
@@ -47,12 +47,11 @@ public class ClearLagOperation extends Operation {
 		}
 		
 		if (ClearLag.getInstance().getConfig().getItemInterval() > 0) {
-			if (ClearLag.getInstance().getConfig().isItemWarnings()) {
-				broadcastMessage("Item",
-						ClearLag.getInstance().getConfig().getItemWarningMessage(),
-						ClearLag.getInstance().getConfig().getItemWarningIntervals(),
-						ClearLag.getInstance().getConfig().getItemInterval());
-			}
+			broadcastMessage("Item",
+					ClearLag.getInstance().getConfig().getItemWarningMessage(),
+					ClearLag.getInstance().getConfig().getItemWarningIntervals(),
+					ClearLag.getInstance().getConfig().getItemInterval(),
+					ClearLag.getInstance().getConfig().isItemWarnings());
 			
 			if (getLastRunTimes().getOrDefault("Item", 0L) < (System.currentTimeMillis() - ClearLag.getInstance().getConfig().getItemInterval())) {
 				ClearLag.getInstance().getEntityManager().removeItems();
@@ -62,12 +61,11 @@ public class ClearLagOperation extends Operation {
 		}
 		
 		if (ClearLag.getInstance().getConfig().getMobInterval() > 0) {
-			if (ClearLag.getInstance().getConfig().isMobWarnings()) {
-				broadcastMessage("Mob",
-						ClearLag.getInstance().getConfig().getMobWarningMessage(),
-						ClearLag.getInstance().getConfig().getMobWarningIntervals(),
-						ClearLag.getInstance().getConfig().getMobInterval());
-			}
+			broadcastMessage("Mob",
+					ClearLag.getInstance().getConfig().getMobWarningMessage(),
+					ClearLag.getInstance().getConfig().getMobWarningIntervals(),
+					ClearLag.getInstance().getConfig().getMobInterval(),
+					ClearLag.getInstance().getConfig().isMobWarnings());
 			
 			if (getLastRunTimes().getOrDefault("Mob", 0L) < (System.currentTimeMillis() - ClearLag.getInstance().getConfig().getMobInterval())) {
 				ClearLag.getInstance().getEntityManager().removeMobs();
@@ -77,8 +75,8 @@ public class ClearLagOperation extends Operation {
 		}
 	}
 	
-	private void broadcastMessage(String type, String message, List<Integer> warningIntervals, long interval) {
-		if (StringUtils.isBlank(type) || StringUtils.isBlank(message) || warningIntervals == null) {
+	private void broadcastMessage(String type, String message, List<Integer> warningIntervals, long interval, boolean warnings) {
+		if (StringUtils.isBlank(type) || StringUtils.isBlank(message) || warningIntervals == null || interval < 0 || !warnings) {
 			return;
 		}
 		

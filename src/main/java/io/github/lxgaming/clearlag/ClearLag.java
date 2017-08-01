@@ -1,5 +1,5 @@
 /*
-x * Copyright 2017 Alex Thomson
+ * Copyright 2017 Alex Thomson
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ public class ClearLag {
 	}
 	
 	public void debugMessage(String message, Object... objects) {
-		if (getConfiguration().getConfig().isDebug()) {
+		if (getConfig() != null && getConfig().isDebug()) {
 			getLogger().info(message, objects);
 		}
 	}

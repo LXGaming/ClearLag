@@ -17,6 +17,7 @@
 package io.github.lxgaming.clearlag.commands.mob;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -48,7 +49,13 @@ public class MobRemoveCommand extends Command {
 			return CommandResult.success();
 		}
 		
-		ClearLag.getInstance().getConfig().getMobList().remove(mob);
+		for (Iterator<String> iterator = ClearLag.getInstance().getConfig().getMobList().iterator(); iterator.hasNext();) {
+			String string = iterator.next();
+			if (StringUtils.isBlank(string) || string.equals(mob)) {
+				iterator.remove();
+			}
+		}
+		
 		ClearLag.getInstance().getConfiguration().saveConfiguration();
 		src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.GREEN, "Successfully removed ", TextColors.AQUA, mob));
 		return CommandResult.success();
@@ -61,11 +68,11 @@ public class MobRemoveCommand extends Command {
 	
 	@Override
 	public String getUsage() {
-		return getName() + " [MobId]";
+		return "<Mob Id>";
 	}
 	
 	@Override
 	public List<CommandElement> getArguments() {
-		return Arrays.asList(GenericArguments.optional(GenericArguments.string(Text.of("mob"))));
+		return Arrays.asList(GenericArguments.string(Text.of("mob")));
 	}
 }

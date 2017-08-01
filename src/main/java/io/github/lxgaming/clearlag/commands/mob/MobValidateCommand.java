@@ -16,16 +16,21 @@
 
 package io.github.lxgaming.clearlag.commands.mob;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
 import io.github.lxgaming.clearlag.ClearLag;
 import io.github.lxgaming.clearlag.commands.Command;
+import io.github.lxgaming.clearlag.util.Reference;
 import io.github.lxgaming.clearlag.util.SpongeHelper;
 
 public class MobValidateCommand extends Command {
@@ -33,26 +38,29 @@ public class MobValidateCommand extends Command {
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if (ClearLag.getInstance().getConfig().getMobList().isEmpty()) {
-			src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.DARK_RED, "Mob list is empty!"));
+			src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.RED, "Mob list is empty!"));
 			return CommandResult.success();
 		}
 		
-		Text.Builder textBuilder = Text.builder();
+		String command = "/" + Reference.PLUGIN_NAME + " Mob Remove [ID]";
+		List<Text> texts = new ArrayList<Text>();
 		for (String string : ClearLag.getInstance().getConfig().getMobList()) {
 			if (SpongeHelper.isCatalogTypePresent(EntityType.class, string)) {
 				continue;
 			}
 			
-			textBuilder.append(Text.of(Text.NEW_LINE, TextColors.RED, string));
+			Text.Builder textBuilder = Text.builder();
+			textBuilder.onClick(TextActions.suggestCommand(command.replace("[ID]", string)));
+			textBuilder.onHover(TextActions.showText(Text.of(command.replace("[ID]", string))));
+			textBuilder.append(Text.of(TextColors.RED, string));
+			texts.add(textBuilder.build());
 		}
 		
-		if (textBuilder.getChildren().isEmpty()) {
-			textBuilder.insert(0, Text.of(TextColors.DARK_GREEN, "All mobs successfully validated."));
-		} else {
-			textBuilder.insert(0, Text.of(TextColors.DARK_RED, "Failed to validate:"));
+		if (!SpongeHelper.buildPagination(src, Text.of(TextColors.DARK_GREEN, "Failed to validate:"), texts)) {
+			src.sendMessage(Text.of(TextColors.GREEN, "All mobs successfully validated."));
+			return CommandResult.success();
 		}
 		
-		src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), textBuilder.build()));
 		return CommandResult.success();
 	}
 	

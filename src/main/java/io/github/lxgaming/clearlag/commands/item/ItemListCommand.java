@@ -16,16 +16,21 @@
 
 package io.github.lxgaming.clearlag.commands.item;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
 import io.github.lxgaming.clearlag.ClearLag;
 import io.github.lxgaming.clearlag.commands.Command;
+import io.github.lxgaming.clearlag.util.Reference;
 import io.github.lxgaming.clearlag.util.SpongeHelper;
 
 public class ItemListCommand extends Command {
@@ -33,22 +38,29 @@ public class ItemListCommand extends Command {
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if (ClearLag.getInstance().getConfig().getItemList().isEmpty()) {
-			src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.DARK_RED, "Item list is empty!"));
+			src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.RED, "Item list is empty!"));
 			return CommandResult.success();
 		}
 		
-		Text.Builder textBuilder = Text.builder();
-		textBuilder.append(Text.of(TextColors.DARK_GREEN, "Items:"));
+		String command = "/" + Reference.PLUGIN_NAME + " Item Remove [ID]";
+		List<Text> texts = new ArrayList<Text>();
 		for (String string : ClearLag.getInstance().getConfig().getItemList()) {
-			if (!SpongeHelper.isCatalogTypePresent(ItemType.class, string)) {
-				textBuilder.append(Text.of(Text.NEW_LINE, TextColors.RED, string));
-				continue;
+			Text.Builder textBuilder = Text.builder();
+			textBuilder.onClick(TextActions.suggestCommand(command.replace("[ID]", string)));
+			textBuilder.onHover(TextActions.showText(Text.of(command.replace("[ID]", string))));
+			if (SpongeHelper.isCatalogTypePresent(ItemType.class, string)) {
+				textBuilder.append(Text.of(TextColors.GREEN, string));
+			} else {
+				textBuilder.append(Text.of(TextColors.RED, string));
 			}
 			
-			textBuilder.append(Text.of(Text.NEW_LINE, TextColors.GREEN, string));
+			texts.add(textBuilder.build());
 		}
 		
-		src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), textBuilder.build()));
+		if (!SpongeHelper.buildPagination(src, Text.of(TextColors.DARK_GREEN, "Items:"), texts)) {
+			src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.RED, "No help available!"));
+		}
+		
 		return CommandResult.success();
 	}
 	

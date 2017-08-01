@@ -23,46 +23,29 @@ import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
 
-import io.github.lxgaming.clearlag.commands.item.ItemCommand;
-import io.github.lxgaming.clearlag.commands.mob.MobCommand;
-import io.github.lxgaming.clearlag.util.Reference;
 import io.github.lxgaming.clearlag.util.SpongeHelper;
 
-public class ClearLagCommand extends Command {
+public class InfoCommand extends Command {
 	
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if (!showHelp(src, "/" + Reference.PLUGIN_NAME + " [COMMAND]")) {
-			src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.RED, "No help available!"));
-		}
-		
+		src.sendMessage(SpongeHelper.getPluginInformation());
 		return CommandResult.success();
 	}
 	
 	@Override
 	public String getName() {
-		return Reference.PLUGIN_NAME;
+		return "Info";
 	}
 	
 	@Override
 	public List<String> getAliases() {
-		return Arrays.asList("clag");
+		return Arrays.asList("Version");
 	}
 	
 	@Override
 	public String getPermission() {
 		return null;
-	}
-	
-	@Override
-	public List<Command> getSubCommands() {
-		return Arrays.asList(
-				new InfoCommand(),
-				new ItemCommand(),
-				new MobCommand(),
-				new ReloadCommand());
 	}
 }

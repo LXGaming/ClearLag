@@ -26,6 +26,8 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.args.GenericArguments;
+import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -53,11 +55,12 @@ public class ItemAddCommand extends Command {
 			}
 			
 			EntityData entityData = new EntityData();
-			entityData.populate(itemStack.toContainer());
+			DataContainer dataContainer = itemStack.toContainer();
+			entityData.populate(dataContainer.getString(DataQuery.of("ItemType")).orElse("") + ":" + dataContainer.getInt(DataQuery.of("UnsafeDamage")).orElse(0));
 			if (ignoreVariant) {
-				item = String.join(":", entityData.getModId(), entityData.getId());
+				item = String.join(":", entityData.getModId(), entityData.getEntityId());
 			} else {
-				item = String.join(":", entityData.getModId(), entityData.getId(), "" + entityData.getVariant());
+				item = String.join(":", entityData.getModId(), entityData.getEntityId(), "" + entityData.getVariant());
 			}
 		}
 		
@@ -84,13 +87,13 @@ public class ItemAddCommand extends Command {
 	
 	@Override
 	public String getUsage() {
-		return getName() + " [Item Id | Hand] [Ignore Variant]";
+		return "<Item Id | Hand> [Ignore Variant]";
 	}
 	
 	@Override
 	public List<CommandElement> getArguments() {
 		return Arrays.asList(
-				GenericArguments.optional(GenericArguments.string(Text.of("item"))),
+				GenericArguments.string(Text.of("item")),
 				GenericArguments.optional(GenericArguments.bool(Text.of("ignoreVariant"))));
 	}
 }

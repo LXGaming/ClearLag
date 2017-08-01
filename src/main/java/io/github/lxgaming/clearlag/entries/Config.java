@@ -37,7 +37,6 @@ public class Config {
 	// Mob Configurations
 	private long mobInterval;
 	private int mobLimit;
-	private int mobLimitPerChunk;
 	private List<String> mobList;
 	private String mobListType;
 	private boolean mobWarnings;
@@ -140,14 +139,6 @@ public class Config {
 	
 	public void setMobLimit(int mobLimit) {
 		this.mobLimit = mobLimit;
-	}
-	
-	public int getMobLimitPerChunk() {
-		return mobLimitPerChunk;
-	}
-	
-	public void setMobLimitPerChunk(int mobLimitPerChunk) {
-		this.mobLimitPerChunk = mobLimitPerChunk;
 	}
 	
 	public List<String> getMobList() {

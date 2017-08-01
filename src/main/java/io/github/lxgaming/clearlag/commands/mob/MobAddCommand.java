@@ -61,11 +61,11 @@ public class MobAddCommand extends Command {
 	
 	@Override
 	public String getUsage() {
-		return getName() + " [MobId]";
+		return "<Mob Id>";
 	}
 	
 	@Override
 	public List<CommandElement> getArguments() {
-		return Arrays.asList(GenericArguments.optional(GenericArguments.string(Text.of("mob"))));
+		return Arrays.asList(GenericArguments.string(Text.of("mob")));
 	}
 }

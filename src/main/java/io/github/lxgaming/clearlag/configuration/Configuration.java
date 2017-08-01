@@ -64,7 +64,6 @@ public class Configuration {
 			//Mob configurations
 			getConfig().setMobInterval(getConfigurationNode().getNode("mobs", "interval").getLong(300000));
 			getConfig().setMobLimit(getConfigurationNode().getNode("mobs", "limit").getInt(500));
-			getConfig().setMobLimitPerChunk(getConfigurationNode().getNode("mobs", "limitPerChunk").getInt(25));
 			getConfig().setMobList(getConfigurationNode().getNode("mobs", "list").getList(TypeToken.of(String.class), Lists.newArrayList()));
 			getConfig().setMobListType(getConfigurationNode().getNode("mobs", "listType").getString("WHITELIST"));
 			getConfig().setMobWarnings(getConfigurationNode().getNode("mobs", "warnings").getBoolean(true));
@@ -98,7 +97,6 @@ public class Configuration {
 			//Mob configurations
 			getConfigurationNode().getNode("mobs", "interval").setValue(getConfig().getMobInterval());
 			getConfigurationNode().getNode("mobs", "limit").setValue(getConfig().getMobLimit());
-			getConfigurationNode().getNode("mobs", "limitPerChunk").setValue(getConfig().getMobLimitPerChunk());
 			getConfigurationNode().getNode("mobs", "list").setValue(getConfig().getMobList().stream().sorted().collect(Collectors.toList()));
 			getConfigurationNode().getNode("mobs", "listType").setValue(getConfig().getMobListType());
 			getConfigurationNode().getNode("mobs", "warnings").setValue(getConfig().isMobWarnings());

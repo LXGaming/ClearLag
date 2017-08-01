@@ -21,6 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.living.Hostile;
@@ -92,7 +94,8 @@ public class EntityManager {
 			EntityData entityData = new EntityData();
 			entityData.populate(entity.getType().getId(), 0);
 			if (Item.class.isAssignableFrom(entity.getClass())) {
-				entityData.populate(((Item) entity).item().get().toContainer());
+				DataContainer dataContainer = ((Item) entity).item().get().toContainer();
+				entityData.populate(dataContainer.getString(DataQuery.of("ItemType")).orElse(""), dataContainer.getInt(DataQuery.of("UnsafeDamage")).orElse(0));
 			}
 			
 			if (!entityData.isValid()) {

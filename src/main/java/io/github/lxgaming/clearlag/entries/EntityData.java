@@ -19,36 +19,52 @@ package io.github.lxgaming.clearlag.entries;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.spongepowered.api.data.DataContainer;
-import org.spongepowered.api.data.DataQuery;
 
 import com.google.gson.Gson;
 
+import io.github.lxgaming.clearlag.util.SpongeHelper;
+
 public class EntityData {
 	
+	private boolean excluded;
 	private String modId;
-	private String id;
+	private String entityId;
 	private int variant;
 	
-	public void populate(DataContainer dataContainer) {
-		if (dataContainer == null) {
-			return;
+	public boolean populate(String string) {
+		if (StringUtils.isBlank(string)) {
+			return false;
 		}
 		
-		populate(dataContainer.getString(DataQuery.of("ItemType")).orElse(""), dataContainer.getInt(DataQuery.of("UnsafeDamage")).orElse(0));
+		String data = StringUtils.substringBeforeLast(string, ":");
+		String variant = StringUtils.substringAfterLast(string, ":");
+		if (StringUtils.isNotBlank(data) && StringUtils.isNumeric(variant)) {
+			return populate(data, SpongeHelper.parseInt(variant));
+		}
+		
+		return populate(string, 0);
 	}
 	
-	public void populate(String entityId, int variant) {
-		if (entityId == null) {
-			return;
+	public boolean populate(String string, int variant) {
+		if (StringUtils.isBlank(string) || variant < 0) {
+			return false;
 		}
 		
-		String[] data = entityId.split(":", 2);
-		if (data.length == 2) {
-			setModId(data[0]);
-			setId(data[1]);
-			setVariant(variant);
+		String modId = StringUtils.substringBefore(string, ":");
+		if (StringUtils.isNotBlank(modId) && modId.startsWith("!")) {
+			modId = modId.substring(1);
+			setExcluded(true);
 		}
+		
+		String entityId = StringUtils.substringAfter(string, ":");
+		if (StringUtils.isNotBlank(modId) && StringUtils.isNotBlank(entityId)) {
+			setModId(modId);
+			setEntityId(entityId);
+			setVariant(variant);
+			return true;
+		}
+		
+		return false;
 	}
 	
 	public boolean isListed(List<String> list) {
@@ -56,15 +72,31 @@ public class EntityData {
 			return false;
 		}
 		
-		if (list.contains(getModId())) {
+		if (list.contains("!" + getModId() + ":" + getEntityId() + ":" + getVariant())) {
+			return false;
+		}
+		
+		if (list.contains("!" + getModId() + ":" + getEntityId())) {
+			return false;
+		}
+		
+		if (list.contains(getModId() + ":any")) {
 			return true;
 		}
 		
-		if (list.contains(String.join(":", getModId(), getId()))) {
+		if (list.contains(getModId() + ":" + getEntityId())) {
 			return true;
 		}
 		
-		if (list.contains(String.join(":", getModId(), getId(), "" + getVariant()))) {
+		if (list.contains(getModId() + ":" + getEntityId() + ":" + getVariant())) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean isUniversal() {
+		if (isValid() && getEntityId().equalsIgnoreCase("any")) {
 			return true;
 		}
 		
@@ -72,11 +104,19 @@ public class EntityData {
 	}
 	
 	public boolean isValid() {
-		if (StringUtils.isNotBlank(getModId()) && StringUtils.isNotBlank(getId())) {
+		if (StringUtils.isNotBlank(getModId()) && StringUtils.isNotBlank(getEntityId()) && getVariant() >= 0) {
 			return true;
 		}
 		
 		return false;
+	}
+	
+	public boolean isExcluded() {
+		return excluded;
+	}
+	
+	public void setExcluded(boolean excluded) {
+		this.excluded = excluded;
 	}
 	
 	public String getModId() {
@@ -87,12 +127,12 @@ public class EntityData {
 		this.modId = modId;
 	}
 	
-	public String getId() {
-		return id;
+	public String getEntityId() {
+		return entityId;
 	}
 	
-	public void setId(String id) {
-		this.id = id;
+	public void setEntityId(String entityId) {
+		this.entityId = entityId;
 	}
 	
 	public int getVariant() {
