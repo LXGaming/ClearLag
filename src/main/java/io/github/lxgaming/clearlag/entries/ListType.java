@@ -17,19 +17,19 @@
 package io.github.lxgaming.clearlag.entries;
 
 public enum ListType {
-	
-	BLACKLIST, WHITELIST, UNKNOWN;
-	
-	public static ListType getListType(String listType) {
-		try {
-			return ListType.valueOf(listType.toUpperCase());
-		} catch (RuntimeException ex) {
-			return ListType.UNKNOWN;
-		}
-	}
-	
-	@Override
-	public String toString() {
-		return name().toUpperCase();
-	}
+    
+    BLACKLIST, WHITELIST, UNKNOWN;
+    
+    public static ListType getListType(String listType) {
+        try {
+            return ListType.valueOf(listType.toUpperCase());
+        } catch (RuntimeException ex) {
+            return ListType.UNKNOWN;
+        }
+    }
+    
+    @Override
+    public String toString() {
+        return name().toUpperCase();
+    }
 }

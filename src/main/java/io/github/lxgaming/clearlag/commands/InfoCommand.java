@@ -16,36 +16,35 @@
 
 package io.github.lxgaming.clearlag.commands;
 
-import java.util.Arrays;
-import java.util.List;
-
+import io.github.lxgaming.clearlag.util.SpongeHelper;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 
-import io.github.lxgaming.clearlag.util.SpongeHelper;
+import java.util.Arrays;
+import java.util.List;
 
 public class InfoCommand extends Command {
-	
-	@Override
-	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		src.sendMessage(SpongeHelper.getPluginInformation());
-		return CommandResult.success();
-	}
-	
-	@Override
-	public String getName() {
-		return "Info";
-	}
-	
-	@Override
-	public List<String> getAliases() {
-		return Arrays.asList("Version");
-	}
-	
-	@Override
-	public String getPermission() {
-		return null;
-	}
+    
+    @Override
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+        src.sendMessage(SpongeHelper.getPluginInformation());
+        return CommandResult.success();
+    }
+    
+    @Override
+    public String getName() {
+        return "Info";
+    }
+    
+    @Override
+    public List<String> getAliases() {
+        return Arrays.asList("Version");
+    }
+    
+    @Override
+    public String getPermission() {
+        return null;
+    }
 }

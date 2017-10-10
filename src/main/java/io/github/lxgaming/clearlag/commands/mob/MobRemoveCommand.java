@@ -16,10 +16,9 @@
 
 package io.github.lxgaming.clearlag.commands.mob;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
+import io.github.lxgaming.clearlag.ClearLag;
+import io.github.lxgaming.clearlag.commands.Command;
+import io.github.lxgaming.clearlag.util.SpongeHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -30,49 +29,49 @@ import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-import io.github.lxgaming.clearlag.ClearLag;
-import io.github.lxgaming.clearlag.commands.Command;
-import io.github.lxgaming.clearlag.util.SpongeHelper;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 public class MobRemoveCommand extends Command {
-	
-	@Override
-	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		String mob = args.<String>getOne("mob").orElse("");
-		if (StringUtils.isBlank(mob)) {
-			src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.RED, "Mob Id not provided!"));
-			return CommandResult.success();
-		}
-		
-		if (!ClearLag.getInstance().getConfig().getMobList().contains(mob)) {
-			src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.AQUA, mob, TextColors.RED, " doesn't exist!"));
-			return CommandResult.success();
-		}
-		
-		for (Iterator<String> iterator = ClearLag.getInstance().getConfig().getMobList().iterator(); iterator.hasNext();) {
-			String string = iterator.next();
-			if (StringUtils.isBlank(string) || string.equals(mob)) {
-				iterator.remove();
-			}
-		}
-		
-		ClearLag.getInstance().getConfiguration().saveConfiguration();
-		src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.GREEN, "Successfully removed ", TextColors.AQUA, mob));
-		return CommandResult.success();
-	}
-	
-	@Override
-	public String getName() {
-		return "Remove";
-	}
-	
-	@Override
-	public String getUsage() {
-		return "<Mob Id>";
-	}
-	
-	@Override
-	public List<CommandElement> getArguments() {
-		return Arrays.asList(GenericArguments.string(Text.of("mob")));
-	}
+
+    @Override
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+        String mob = args.<String>getOne("mob").orElse("");
+        if (StringUtils.isBlank(mob)) {
+            src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.RED, "Mob Id not provided!"));
+            return CommandResult.success();
+        }
+
+        if (!ClearLag.getInstance().getConfig().getMobList().contains(mob)) {
+            src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.AQUA, mob, TextColors.RED, " doesn't exist!"));
+            return CommandResult.success();
+        }
+
+        for (Iterator<String> iterator = ClearLag.getInstance().getConfig().getMobList().iterator(); iterator.hasNext(); ) {
+            String string = iterator.next();
+            if (StringUtils.isBlank(string) || string.equals(mob)) {
+                iterator.remove();
+            }
+        }
+
+        ClearLag.getInstance().getConfiguration().saveConfiguration();
+        src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.GREEN, "Successfully removed ", TextColors.AQUA, mob));
+        return CommandResult.success();
+    }
+
+    @Override
+    public String getName() {
+        return "Remove";
+    }
+
+    @Override
+    public String getUsage() {
+        return "<Mob Id>";
+    }
+
+    @Override
+    public List<CommandElement> getArguments() {
+        return Arrays.asList(GenericArguments.string(Text.of("mob")));
+    }
 }

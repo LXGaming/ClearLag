@@ -16,9 +16,10 @@
 
 package io.github.lxgaming.clearlag.commands.item;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import io.github.lxgaming.clearlag.ClearLag;
+import io.github.lxgaming.clearlag.commands.Command;
+import io.github.lxgaming.clearlag.util.Reference;
+import io.github.lxgaming.clearlag.util.SpongeHelper;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -28,44 +29,42 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
-import io.github.lxgaming.clearlag.ClearLag;
-import io.github.lxgaming.clearlag.commands.Command;
-import io.github.lxgaming.clearlag.util.Reference;
-import io.github.lxgaming.clearlag.util.SpongeHelper;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ItemListCommand extends Command {
-	
-	@Override
-	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if (ClearLag.getInstance().getConfig().getItemList().isEmpty()) {
-			src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.RED, "Item list is empty!"));
-			return CommandResult.success();
-		}
-		
-		String command = "/" + Reference.PLUGIN_NAME + " Item Remove [ID]";
-		List<Text> texts = new ArrayList<Text>();
-		for (String string : ClearLag.getInstance().getConfig().getItemList()) {
-			Text.Builder textBuilder = Text.builder();
-			textBuilder.onClick(TextActions.suggestCommand(command.replace("[ID]", string)));
-			textBuilder.onHover(TextActions.showText(Text.of(command.replace("[ID]", string))));
-			if (SpongeHelper.isCatalogTypePresent(ItemType.class, string)) {
-				textBuilder.append(Text.of(TextColors.GREEN, string));
-			} else {
-				textBuilder.append(Text.of(TextColors.RED, string));
-			}
-			
-			texts.add(textBuilder.build());
-		}
-		
-		if (!SpongeHelper.buildPagination(src, Text.of(TextColors.DARK_GREEN, "Items:"), texts)) {
-			src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.RED, "No help available!"));
-		}
-		
-		return CommandResult.success();
-	}
-	
-	@Override
-	public String getName() {
-		return "List";
-	}
+
+    @Override
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+        if (ClearLag.getInstance().getConfig().getItemList().isEmpty()) {
+            src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.RED, "Item list is empty!"));
+            return CommandResult.success();
+        }
+
+        String command = "/" + Reference.PLUGIN_NAME + " Item Remove [ID]";
+        List<Text> texts = new ArrayList<Text>();
+        for (String string : ClearLag.getInstance().getConfig().getItemList()) {
+            Text.Builder textBuilder = Text.builder();
+            textBuilder.onClick(TextActions.suggestCommand(command.replace("[ID]", string)));
+            textBuilder.onHover(TextActions.showText(Text.of(command.replace("[ID]", string))));
+            if (SpongeHelper.isCatalogTypePresent(ItemType.class, string)) {
+                textBuilder.append(Text.of(TextColors.GREEN, string));
+            } else {
+                textBuilder.append(Text.of(TextColors.RED, string));
+            }
+
+            texts.add(textBuilder.build());
+        }
+
+        if (!SpongeHelper.buildPagination(src, Text.of(TextColors.DARK_GREEN, "Items:"), texts)) {
+            src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.RED, "No help available!"));
+        }
+
+        return CommandResult.success();
+    }
+
+    @Override
+    public String getName() {
+        return "List";
+    }
 }

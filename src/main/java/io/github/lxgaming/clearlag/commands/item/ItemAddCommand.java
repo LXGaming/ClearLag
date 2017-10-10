@@ -16,9 +16,10 @@
 
 package io.github.lxgaming.clearlag.commands.item;
 
-import java.util.Arrays;
-import java.util.List;
-
+import io.github.lxgaming.clearlag.ClearLag;
+import io.github.lxgaming.clearlag.commands.Command;
+import io.github.lxgaming.clearlag.entries.EntityData;
+import io.github.lxgaming.clearlag.util.SpongeHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -34,66 +35,64 @@ import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-import io.github.lxgaming.clearlag.ClearLag;
-import io.github.lxgaming.clearlag.commands.Command;
-import io.github.lxgaming.clearlag.entries.EntityData;
-import io.github.lxgaming.clearlag.util.SpongeHelper;
+import java.util.Arrays;
+import java.util.List;
 
 public class ItemAddCommand extends Command {
-	
-	@Override
-	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		String item = args.<String>getOne("item").orElse("");
-		boolean ignoreVariant = args.<Boolean>getOne("ignoreVariant").orElse(false);
-		
-		if ((StringUtils.isBlank(item) || item.equalsIgnoreCase("hand")) && src instanceof Player) {
-			Player player = (Player) src;
-			ItemStack itemStack = player.getItemInHand(HandTypes.MAIN_HAND).orElse(null);
-			if (itemStack == null) {
-				src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.RED, "You are not holding anything!"));
-				return CommandResult.success();
-			}
-			
-			EntityData entityData = new EntityData();
-			DataContainer dataContainer = itemStack.toContainer();
-			entityData.populate(dataContainer.getString(DataQuery.of("ItemType")).orElse("") + ":" + dataContainer.getInt(DataQuery.of("UnsafeDamage")).orElse(0));
-			if (ignoreVariant) {
-				item = String.join(":", entityData.getModId(), entityData.getEntityId());
-			} else {
-				item = String.join(":", entityData.getModId(), entityData.getEntityId(), "" + entityData.getVariant());
-			}
-		}
-		
-		if (StringUtils.isBlank(item)) {
-			src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.RED, "Item Id not provided!"));
-			return CommandResult.success();
-		}
-		
-		if (ClearLag.getInstance().getConfig().getItemList().contains(item)) {
-			src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.AQUA, item, TextColors.RED, " already exists!"));
-			return CommandResult.success();
-		}
-		
-		ClearLag.getInstance().getConfig().getItemList().add(item);
-		ClearLag.getInstance().getConfiguration().saveConfiguration();
-		src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.GREEN, "Successfully added ", TextColors.AQUA, item));
-		return CommandResult.success();
-	}
-	
-	@Override
-	public String getName() {
-		return "Add";
-	}
-	
-	@Override
-	public String getUsage() {
-		return "<Item Id | Hand> [Ignore Variant]";
-	}
-	
-	@Override
-	public List<CommandElement> getArguments() {
-		return Arrays.asList(
-				GenericArguments.string(Text.of("item")),
-				GenericArguments.optional(GenericArguments.bool(Text.of("ignoreVariant"))));
-	}
+
+    @Override
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+        String item = args.<String>getOne("item").orElse("");
+        boolean ignoreVariant = args.<Boolean>getOne("ignoreVariant").orElse(false);
+
+        if ((StringUtils.isBlank(item) || item.equalsIgnoreCase("hand")) && src instanceof Player) {
+            Player player = (Player) src;
+            ItemStack itemStack = player.getItemInHand(HandTypes.MAIN_HAND).orElse(null);
+            if (itemStack == null) {
+                src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.RED, "You are not holding anything!"));
+                return CommandResult.success();
+            }
+
+            EntityData entityData = new EntityData();
+            DataContainer dataContainer = itemStack.toContainer();
+            entityData.populate(dataContainer.getString(DataQuery.of("ItemType")).orElse("") + ":" + dataContainer.getInt(DataQuery.of("UnsafeDamage")).orElse(0));
+            if (ignoreVariant) {
+                item = String.join(":", entityData.getModId(), entityData.getEntityId());
+            } else {
+                item = String.join(":", entityData.getModId(), entityData.getEntityId(), "" + entityData.getVariant());
+            }
+        }
+
+        if (StringUtils.isBlank(item)) {
+            src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.RED, "Item Id not provided!"));
+            return CommandResult.success();
+        }
+
+        if (ClearLag.getInstance().getConfig().getItemList().contains(item)) {
+            src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.AQUA, item, TextColors.RED, " already exists!"));
+            return CommandResult.success();
+        }
+
+        ClearLag.getInstance().getConfig().getItemList().add(item);
+        ClearLag.getInstance().getConfiguration().saveConfiguration();
+        src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.GREEN, "Successfully added ", TextColors.AQUA, item));
+        return CommandResult.success();
+    }
+
+    @Override
+    public String getName() {
+        return "Add";
+    }
+
+    @Override
+    public String getUsage() {
+        return "<Item Id | Hand> [Ignore Variant]";
+    }
+
+    @Override
+    public List<CommandElement> getArguments() {
+        return Arrays.asList(
+                GenericArguments.string(Text.of("item")),
+                GenericArguments.optional(GenericArguments.bool(Text.of("ignoreVariant"))));
+    }
 }

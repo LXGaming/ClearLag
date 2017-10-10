@@ -17,18 +17,18 @@
 package io.github.lxgaming.clearlag.operations;
 
 public abstract class Operation implements Runnable {
-	
-	public abstract String getName();
-	
-	public boolean isAsync() {
-		return false;
-	}
-	
-	public long getDelay() {
-		return 0L;
-	}
-	
-	public long getInterval() {
-		return 0L;
-	}
+    
+    public abstract String getName();
+    
+    public boolean isAsync() {
+        return false;
+    }
+    
+    public long getDelay() {
+        return 0L;
+    }
+    
+    public long getInterval() {
+        return 0L;
+    }
 }

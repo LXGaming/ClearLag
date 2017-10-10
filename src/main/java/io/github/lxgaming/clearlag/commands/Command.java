@@ -16,9 +16,8 @@
 
 package io.github.lxgaming.clearlag.commands;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import io.github.lxgaming.clearlag.util.Reference;
+import io.github.lxgaming.clearlag.util.SpongeHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandElement;
@@ -27,68 +26,68 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
-import io.github.lxgaming.clearlag.util.Reference;
-import io.github.lxgaming.clearlag.util.SpongeHelper;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Command implements CommandExecutor {
-	
-	public abstract String getName();
-	
-	public Text getDescription() {
-		return Text.of("No description provided");
-	}
-	
-	public String getUsage() {
-		return null;
-	}
-	
-	public List<String> getAliases() {
-		return null;
-	}
-	
-	public String getPermission() {
-		return Reference.PLUGIN_NAME + ".Command." + getName();
-	}
-	
-	public List<CommandElement> getArguments() {
-		return null;
-	}
-	
-	public List<Command> getSubCommands() {
-		return null;
-	}
-	
-	protected boolean showHelp(CommandSource commandSource, String format) {
-		if (getSubCommands() == null) {
-			return false;
-		}
-		
-		List<Text> texts = new ArrayList<Text>();
-		boolean missingPermissions = false;
-		for (Command command : getSubCommands()) {
-			if (StringUtils.isNotBlank(command.getPermission()) && !commandSource.hasPermission(command.getPermission())) {
-				missingPermissions = true;
-				continue;
-			}
-			
-			String commandName = format.replace("[COMMAND]", command.getName());
-			Text.Builder textBuilder = Text.builder();
-			textBuilder.onClick(TextActions.suggestCommand(commandName));
-			if (StringUtils.isNotBlank(command.getUsage())) {
-				textBuilder.onHover(TextActions.showText(Text.of(commandName, " ", command.getUsage())));
-				textBuilder.append(Text.of(TextColors.GREEN, commandName, " ", TextColors.WHITE, command.getUsage()));
-			} else {
-				textBuilder.onHover(TextActions.showText(Text.of(commandName)));
-				textBuilder.append(Text.of(TextColors.GREEN, commandName));
-			}
-			
-			texts.add(textBuilder.build());
-		}
-		
-		if (missingPermissions) {
-			texts.add(Text.of(TextColors.RED, "You are missing permissions for one or more commands!"));
-		}
-		
-		return SpongeHelper.buildPagination(commandSource, Text.of(TextColors.DARK_GREEN, getName() + " Commands:"), texts);
-	}
+    
+    public abstract String getName();
+    
+    public Text getDescription() {
+        return Text.of("No description provided");
+    }
+    
+    public String getUsage() {
+        return null;
+    }
+    
+    public List<String> getAliases() {
+        return null;
+    }
+    
+    public String getPermission() {
+        return Reference.PLUGIN_NAME + ".Command." + getName();
+    }
+    
+    public List<CommandElement> getArguments() {
+        return null;
+    }
+    
+    public List<Command> getSubCommands() {
+        return null;
+    }
+    
+    protected boolean showHelp(CommandSource commandSource, String format) {
+        if (getSubCommands() == null) {
+            return false;
+        }
+        
+        List<Text> texts = new ArrayList<Text>();
+        boolean missingPermissions = false;
+        for (Command command : getSubCommands()) {
+            if (StringUtils.isNotBlank(command.getPermission()) && !commandSource.hasPermission(command.getPermission())) {
+                missingPermissions = true;
+                continue;
+            }
+            
+            String commandName = format.replace("[COMMAND]", command.getName());
+            Text.Builder textBuilder = Text.builder();
+            textBuilder.onClick(TextActions.suggestCommand(commandName));
+            if (StringUtils.isNotBlank(command.getUsage())) {
+                textBuilder.onHover(TextActions.showText(Text.of(commandName, " ", command.getUsage())));
+                textBuilder.append(Text.of(TextColors.GREEN, commandName, " ", TextColors.WHITE, command.getUsage()));
+            } else {
+                textBuilder.onHover(TextActions.showText(Text.of(commandName)));
+                textBuilder.append(Text.of(TextColors.GREEN, commandName));
+            }
+            
+            texts.add(textBuilder.build());
+        }
+        
+        if (missingPermissions) {
+            texts.add(Text.of(TextColors.RED, "You are missing permissions for one or more commands!"));
+        }
+        
+        return SpongeHelper.buildPagination(commandSource, Text.of(TextColors.DARK_GREEN, getName() + " Commands:"), texts);
+    }
 }

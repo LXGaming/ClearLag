@@ -17,12 +17,12 @@
 package io.github.lxgaming.clearlag.util;
 
 public class Reference {
-	
-	public static final String PLUGIN_ID = "clearlag";
-	public static final String PLUGIN_NAME = "ClearLag";
-	public static final String VERSION = "1.0.2-BETA";
-	public static final String DESCRIPTION = "It's not as effective as 'rm -rf /' but I guess it'll do.";
-	public static final String AUTHORS = "LX_Gaming";
-	public static final String SOURCE = "https://github.com/LXGaming/ClearLag";
-	public static final String WEBSITE = "https://lxgaming.github.io";
+    
+    public static final String PLUGIN_ID = "clearlag";
+    public static final String PLUGIN_NAME = "ClearLag";
+    public static final String PLUGIN_VERSION = "1.1.0";
+    public static final String DESCRIPTION = "It's not as effective as 'rm -rf /' but I guess it'll do.";
+    public static final String AUTHORS = "LX_Gaming";
+    public static final String SOURCE = "https://github.com/LXGaming/ClearLag";
+    public static final String WEBSITE = "https://lxgaming.github.io";
 }
