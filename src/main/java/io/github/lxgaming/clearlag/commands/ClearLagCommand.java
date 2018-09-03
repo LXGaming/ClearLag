@@ -1,12 +1,12 @@
 /*
- * Copyright 2017 Alex Thomson
- * 
+ * Copyright 2018 Alex Thomson
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,52 +16,27 @@
 
 package io.github.lxgaming.clearlag.commands;
 
-import io.github.lxgaming.clearlag.commands.item.ItemCommand;
-import io.github.lxgaming.clearlag.commands.mob.MobCommand;
-import io.github.lxgaming.clearlag.util.Reference;
-import io.github.lxgaming.clearlag.util.SpongeHelper;
-import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.args.CommandContext;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
 
-import java.util.Arrays;
 import java.util.List;
 
-public class ClearLagCommand extends Command {
+public class ClearLagCommand extends AbstractCommand {
+    
+    public ClearLagCommand() {
+        addAlias("clearlag");
+        addChild(AddCommand.class);
+        addChild(HelpCommand.class);
+        addChild(InfoCommand.class);
+        addChild(ReloadCommand.class);
+        addChild(RemoveCommand.class);
+        addChild(ResultCommand.class);
+        addChild(ValidateCommand.class);
+    }
     
     @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        if (!showHelp(src, "/" + Reference.PLUGIN_NAME + " [COMMAND]")) {
-            src.sendMessage(Text.of(SpongeHelper.getTextPrefix(), TextColors.RED, "No help available!"));
-        }
-        
+    public CommandResult execute(CommandSource commandSource, List<String> arguments) {
+        getHelp(commandSource).ifPresent(commandSource::sendMessage);
         return CommandResult.success();
-    }
-    
-    @Override
-    public String getName() {
-        return Reference.PLUGIN_NAME;
-    }
-    
-    @Override
-    public List<String> getAliases() {
-        return Arrays.asList("clag");
-    }
-    
-    @Override
-    public String getPermission() {
-        return null;
-    }
-    
-    @Override
-    public List<Command> getSubCommands() {
-        return Arrays.asList(
-                new InfoCommand(),
-                new ItemCommand(),
-                new MobCommand(),
-                new ReloadCommand());
     }
 }

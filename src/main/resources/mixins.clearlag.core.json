@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "minVersion": "0.7.4",
+  "package": "io.github.lxgaming.clearlag.mixin.core",
+  "refmap": "mixins.clearlag.refmap.json",
+  "target": "@env(DEFAULT)",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "entity.item.MixinEntityItem",
+    "entity.MixinEntity",
+    "server.MixinMinecraftServer",
+    "world.MixinWorld"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

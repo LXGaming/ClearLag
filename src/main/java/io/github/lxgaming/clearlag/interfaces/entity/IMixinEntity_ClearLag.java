@@ -1,12 +1,12 @@
 /*
- * Copyright 2017 Alex Thomson
- * 
+ * Copyright 2018 Alex Thomson
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,22 +14,15 @@
  * limitations under the License.
  */
 
-package io.github.lxgaming.clearlag.entries;
+package io.github.lxgaming.clearlag.interfaces.entity;
 
-public enum ListType {
+import org.spongepowered.common.interfaces.entity.IMixinEntity;
+
+public interface IMixinEntity_ClearLag extends IMixinEntity {
     
-    BLACKLIST, WHITELIST, UNKNOWN;
+    void removeEntity();
     
-    public static ListType getListType(String listType) {
-        try {
-            return ListType.valueOf(listType.toUpperCase());
-        } catch (RuntimeException ex) {
-            return ListType.UNKNOWN;
-        }
-    }
+    int getLastTick();
     
-    @Override
-    public String toString() {
-        return name().toUpperCase();
-    }
+    void setLastTick(int lastTick);
 }
