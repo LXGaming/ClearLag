@@ -106,6 +106,7 @@ public class AddCommand extends AbstractCommand {
         }
         
         typeCategory.getTypes().put(catalogData.toString(), tristate);
+        ClearLag.getInstance().getConfiguration().saveConfiguration();
         commandSource.sendMessage(Text.of(Toolbox.getTextPrefix(), TextColors.GREEN, "Added ", catalogData.toString(), " to ", clearData.getName()));
         return CommandResult.success();
     }

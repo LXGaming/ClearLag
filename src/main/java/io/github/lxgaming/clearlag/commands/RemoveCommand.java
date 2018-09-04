@@ -87,6 +87,7 @@ public class RemoveCommand extends AbstractCommand {
         
         String type = arguments.remove(0);
         typeCategory.getTypes().remove(type);
+        ClearLag.getInstance().getConfiguration().saveConfiguration();
         commandSource.sendMessage(Text.of(Toolbox.getTextPrefix(), TextColors.GREEN, "Removed ", type, " from ", clearData.getName()));
         return CommandResult.success();
     }
