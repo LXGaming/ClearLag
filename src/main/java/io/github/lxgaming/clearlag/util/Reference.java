@@ -24,5 +24,5 @@ public class Reference {
     public static final String DESCRIPTION = "Entity removal plugin for Sponge";
     public static final String AUTHORS = "LX_Gaming";
     public static final String SOURCE = "https://github.com/LXGaming/ClearLag";
-    public static final String WEBSITE = "https://lxgaming.github.io";
+    public static final String WEBSITE = "https://lxgaming.github.io/";
 }
