@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.github.lxgaming.clearlag.services;
+package io.github.lxgaming.clearlag.service;
 
 import io.github.lxgaming.clearlag.ClearLag;
-import io.github.lxgaming.clearlag.configuration.categories.TypeCategory;
+import io.github.lxgaming.clearlag.configuration.category.TypeCategory;
 import io.github.lxgaming.clearlag.data.ClearData;
-import io.github.lxgaming.clearlag.managers.ClearManager;
+import io.github.lxgaming.clearlag.manager.ClearManager;
 import io.github.lxgaming.clearlag.util.Broadcast;
 import io.github.lxgaming.clearlag.util.Toolbox;
 import org.apache.commons.lang3.StringUtils;
@@ -31,15 +31,7 @@ import org.spongepowered.api.text.Text;
 public final class ClearService extends AbstractService {
     
     @Override
-    public boolean prepareService() {
-        setAsynchronous(true);
-        setDelay(0L);
-        setInterval(1000L);
-        return true;
-    }
-    
-    @Override
-    public void executeService() {
+    public void execute() {
         if (Sponge.getGame().getState() != GameState.SERVER_STARTED) {
             return;
         }

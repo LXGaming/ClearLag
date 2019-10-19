@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Alex Thomson
+ * Copyright 2019 Alex Thomson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package io.github.lxgaming.clearlag.mixin.core.world;
 
 import io.github.lxgaming.clearlag.ClearLag;
-import io.github.lxgaming.clearlag.interfaces.entity.IMixinEntity_ClearLag;
+import io.github.lxgaming.clearlag.bridge.entity.EntityBridge;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -27,21 +27,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.common.SpongeImpl;
 
 @Mixin(value = World.class, priority = 137)
-public abstract class MixinWorld {
+public abstract class WorldMixin {
     
     @Inject(method = "updateEntityWithOptionalForce", at = @At(value = "HEAD"), cancellable = true)
     private void onUpdateEntityWithOptionalForce(Entity entity, boolean forceUpdate, CallbackInfo callbackInfo) {
-        IMixinEntity_ClearLag mixinEntity = (IMixinEntity_ClearLag) entity;
-        if (mixinEntity.getLastTick() == SpongeImpl.getServer().getTickCounter()) {
-            ClearLag.getInstance().debugMessage("{} already ticked", mixinEntity.getType().getId());
+        EntityBridge entityBridge = (EntityBridge) entity;
+        if (entityBridge.bridge$getLastTick() == SpongeImpl.getServer().getTickCounter()) {
+            ClearLag.getInstance().debug("{} already ticked", entityBridge.getType().getId());
             return;
         }
         
-        mixinEntity.setLastTick(SpongeImpl.getServer().getTickCounter());
-        mixinEntity.removeEntity();
+        entityBridge.bridge$setLastTick(SpongeImpl.getServer().getTickCounter());
+        entityBridge.bridge$removeEntity();
         
         // Don't perform update logic on a dead entity
-        if (mixinEntity.isRemoved()) {
+        if (entityBridge.isRemoved()) {
             callbackInfo.cancel();
         }
     }

@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package io.github.lxgaming.clearlag.commands;
+package io.github.lxgaming.clearlag.command;
 
+import com.google.common.collect.Lists;
 import io.github.lxgaming.clearlag.ClearLag;
-import io.github.lxgaming.clearlag.configuration.categories.TypeCategory;
-import io.github.lxgaming.clearlag.data.CatalogData;
+import io.github.lxgaming.clearlag.configuration.category.TypeCategory;
 import io.github.lxgaming.clearlag.data.ClearData;
-import io.github.lxgaming.clearlag.managers.ClearManager;
+import io.github.lxgaming.clearlag.manager.ClearManager;
 import io.github.lxgaming.clearlag.util.Reference;
 import io.github.lxgaming.clearlag.util.Toolbox;
-import org.apache.commons.lang3.BooleanUtils;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
@@ -32,27 +30,26 @@ import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.util.Tristate;
 
 import java.util.List;
 
-public class AddCommand extends AbstractCommand {
+public class RemoveCommand extends AbstractCommand {
     
-    public AddCommand() {
-        addAlias("add");
-        setPermission("clearlag.command.add");
-        setUsage("<Type> <Id> [False/True]");
+    public RemoveCommand() {
+        addAlias("remove");
+        setPermission("clearlag.command.remove");
+        setUsage("<Type> <Id>");
     }
     
     @Override
     public CommandResult execute(CommandSource commandSource, List<String> arguments) {
         if (arguments.isEmpty()) {
             if (commandSource instanceof Player) {
-                List<Text> texts = Toolbox.newArrayList();
+                List<Text> texts = Lists.newArrayList();
                 ClearManager.getAllClearData().forEach(clearData -> {
                     Text.Builder textBuilder = Text.builder();
                     textBuilder.append(Text.of(clearData.getName()));
-                    textBuilder.onClick(TextActions.suggestCommand("/" + Reference.PLUGIN_ID + " " + getPrimaryAlias().orElse("Unknown") + " " + clearData.getId()));
+                    textBuilder.onClick(TextActions.suggestCommand("/" + Reference.ID + " " + getPrimaryAlias().orElse("Unknown") + " " + clearData.getId()));
                     textBuilder.onHover(TextActions.showText(Text.of(clearData.getId())));
                     texts.add(textBuilder.build());
                 });
@@ -72,7 +69,7 @@ public class AddCommand extends AbstractCommand {
             return CommandResult.empty();
         }
         
-        if (arguments.size() < 2) {
+        if (arguments.size() != 2) {
             commandSource.sendMessage(Text.of(Toolbox.getTextPrefix(), TextColors.RED, "Invalid arguments: ", getUsage()));
             return CommandResult.empty();
         }
@@ -89,25 +86,10 @@ public class AddCommand extends AbstractCommand {
             return CommandResult.empty();
         }
         
-        CatalogData catalogData = CatalogData.of(arguments.remove(0));
-        if (!catalogData.isValid()) {
-            commandSource.sendMessage(Text.of(Toolbox.getTextPrefix(), TextColors.RED, "Failed to parse id"));
-            return CommandResult.empty();
-        }
-        
-        if (!Sponge.getRegistry().getType(clearData.getCatalogTypeClass(), catalogData.getUniqueId()).isPresent()) {
-            commandSource.sendMessage(Text.of(Toolbox.getTextPrefix(), TextColors.RED, "Id does not exist in registry"));
-            return CommandResult.empty();
-        }
-        
-        Tristate tristate = typeCategory.getDefaultValue();
-        if (!arguments.isEmpty()) {
-            tristate = Tristate.fromBoolean(BooleanUtils.toBoolean(arguments.remove(0)));
-        }
-        
-        typeCategory.getTypes().put(catalogData.toString(), tristate);
+        String type = arguments.remove(0);
+        typeCategory.getTypes().remove(type);
         ClearLag.getInstance().getConfiguration().saveConfiguration();
-        commandSource.sendMessage(Text.of(Toolbox.getTextPrefix(), TextColors.GREEN, "Added ", catalogData.toString(), " to ", clearData.getName()));
+        commandSource.sendMessage(Text.of(Toolbox.getTextPrefix(), TextColors.GREEN, "Removed ", type, " from ", clearData.getName()));
         return CommandResult.success();
     }
 }

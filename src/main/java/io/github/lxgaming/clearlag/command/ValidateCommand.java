@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package io.github.lxgaming.clearlag.commands;
+package io.github.lxgaming.clearlag.command;
 
+import com.google.common.collect.Lists;
 import io.github.lxgaming.clearlag.ClearLag;
-import io.github.lxgaming.clearlag.configuration.categories.TypeCategory;
+import io.github.lxgaming.clearlag.configuration.category.TypeCategory;
+import io.github.lxgaming.clearlag.data.CatalogData;
 import io.github.lxgaming.clearlag.data.ClearData;
-import io.github.lxgaming.clearlag.managers.ClearManager;
-import io.github.lxgaming.clearlag.util.Reference;
+import io.github.lxgaming.clearlag.manager.ClearManager;
 import io.github.lxgaming.clearlag.util.Toolbox;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
@@ -32,23 +34,23 @@ import org.spongepowered.api.text.format.TextColors;
 
 import java.util.List;
 
-public class RemoveCommand extends AbstractCommand {
+public class ValidateCommand extends AbstractCommand {
     
-    public RemoveCommand() {
-        addAlias("remove");
-        setPermission("clearlag.command.remove");
-        setUsage("<Type> <Id>");
+    public ValidateCommand() {
+        addAlias("validate");
+        setPermission("clearlag.command.validate");
+        setUsage("<Type>");
     }
     
     @Override
     public CommandResult execute(CommandSource commandSource, List<String> arguments) {
         if (arguments.isEmpty()) {
             if (commandSource instanceof Player) {
-                List<Text> texts = Toolbox.newArrayList();
+                List<Text> texts = Lists.newArrayList();
                 ClearManager.getAllClearData().forEach(clearData -> {
                     Text.Builder textBuilder = Text.builder();
                     textBuilder.append(Text.of(clearData.getName()));
-                    textBuilder.onClick(TextActions.suggestCommand("/" + Reference.PLUGIN_ID + " " + getPrimaryAlias().orElse("Unknown") + " " + clearData.getId()));
+                    textBuilder.onClick(TextActions.executeCallback(callback -> validateCallback(clearData, callback)));
                     textBuilder.onHover(TextActions.showText(Text.of(clearData.getId())));
                     texts.add(textBuilder.build());
                 });
@@ -68,27 +70,44 @@ public class RemoveCommand extends AbstractCommand {
             return CommandResult.empty();
         }
         
-        if (arguments.size() != 2) {
-            commandSource.sendMessage(Text.of(Toolbox.getTextPrefix(), TextColors.RED, "Invalid arguments: ", getUsage()));
-            return CommandResult.empty();
-        }
-        
         ClearData clearData = ClearManager.getClearData(arguments.remove(0)).orElse(null);
         if (clearData == null) {
             commandSource.sendMessage(Text.of(Toolbox.getTextPrefix(), TextColors.RED, "ClearData not present"));
             return CommandResult.empty();
         }
         
+        validateCallback(clearData, commandSource);
+        return CommandResult.success();
+    }
+    
+    private void validateCallback(ClearData clearData, CommandSource commandSource) {
         TypeCategory typeCategory = ClearLag.getInstance().getConfig().map(clearData.getConfigFunction()).orElse(null);
         if (typeCategory == null) {
             commandSource.sendMessage(Text.of(Toolbox.getTextPrefix(), TextColors.RED, "Config unavailable"));
-            return CommandResult.empty();
+            return;
         }
         
-        String type = arguments.remove(0);
-        typeCategory.getTypes().remove(type);
-        ClearLag.getInstance().getConfiguration().saveConfiguration();
-        commandSource.sendMessage(Text.of(Toolbox.getTextPrefix(), TextColors.GREEN, "Removed ", type, " from ", clearData.getName()));
-        return CommandResult.success();
+        List<Text> texts = Lists.newArrayList();
+        for (String key : typeCategory.getTypes().keySet()) {
+            CatalogData catalogData = CatalogData.of(key);
+            if (!catalogData.isValid() || !Sponge.getRegistry().getType(clearData.getCatalogTypeClass(), catalogData.getUniqueId()).isPresent()) {
+                texts.add(Text.of(TextColors.RED, key));
+            }
+        }
+        
+        if (texts.isEmpty()) {
+            commandSource.sendMessage(Text.of(Toolbox.getTextPrefix(), TextColors.GREEN, "All ", clearData.getName(), " validated"));
+            return;
+        }
+        
+        if (commandSource instanceof Player) {
+            PaginationList.Builder paginationBuilder = PaginationList.builder();
+            paginationBuilder.title(Text.of(TextColors.WHITE, "Validate: ", clearData.getName()));
+            paginationBuilder.padding(Text.of(TextColors.DARK_GRAY, "="));
+            paginationBuilder.contents(texts);
+            paginationBuilder.build().sendTo(commandSource);
+        } else {
+            texts.forEach(commandSource::sendMessage);
+        }
     }
 }

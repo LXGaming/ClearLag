@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Alex Thomson
+ * Copyright 2019 Alex Thomson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package io.github.lxgaming.clearlag.mixin.core.server;
 
-import io.github.lxgaming.clearlag.managers.ClearManager;
+import io.github.lxgaming.clearlag.manager.ClearManager;
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,15 +24,15 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = MinecraftServer.class, priority = 1337)
-public abstract class MixinMinecraftServer {
+public abstract class MinecraftServerMixin {
     
     @Inject(method = "tick", at = @At(value = "HEAD"))
-    private void onTickServerPre(CallbackInfo callbackInfo) {
+    private void onTickPre(CallbackInfo callbackInfo) {
         ClearManager.getAllClearData().forEach(ClearManager::updatePre);
     }
     
     @Inject(method = "tick", at = @At(value = "RETURN"))
-    private void onTickServerPost(CallbackInfo callbackInfo) {
+    private void onTickPost(CallbackInfo callbackInfo) {
         ClearManager.getAllClearData().forEach(ClearManager::updatePost);
     }
 }

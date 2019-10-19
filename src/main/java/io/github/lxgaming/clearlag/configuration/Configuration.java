@@ -17,7 +17,7 @@
 package io.github.lxgaming.clearlag.configuration;
 
 import io.github.lxgaming.clearlag.ClearLag;
-import ninja.leaping.configurate.ConfigurationOptions;
+import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -31,52 +31,37 @@ public class Configuration {
     
     private ConfigurationLoader<CommentedConfigurationNode> configurationLoader;
     private ObjectMapper<Config>.BoundInstance objectMapper;
-    private CommentedConfigurationNode configurationNode;
-    private Config config;
     
     public Configuration(Path path) {
         try {
             this.configurationLoader = HoconConfigurationLoader.builder().setPath(path).build();
             this.objectMapper = ObjectMapper.forClass(Config.class).bindToNew();
         } catch (Exception ex) {
-            ClearLag.getInstance().getLogger().error("Encountered an error initializing {}", getClass().getSimpleName(), ex);
+            ClearLag.getInstance().getLogger().error("Encountered an error while initializing configuration", ex);
         }
     }
     
     public void loadConfiguration() {
         try {
-            configurationNode = getConfigurationLoader().load(ConfigurationOptions.defaults());
-            config = getObjectMapper().populate(getConfigurationNode());
+            this.objectMapper.populate(this.configurationLoader.load());
             ClearLag.getInstance().getLogger().info("Successfully loaded configuration file.");
-        } catch (IOException | ObjectMappingException | RuntimeException ex) {
-            configurationNode = getConfigurationLoader().createEmptyNode(ConfigurationOptions.defaults());
-            ClearLag.getInstance().getLogger().error("Encountered an error processing {}::loadConfiguration", getClass().getSimpleName(), ex);
+        } catch (Exception ex) {
+            ClearLag.getInstance().getLogger().error("Encountered an error while loading config", ex);
         }
     }
     
     public void saveConfiguration() {
         try {
-            getObjectMapper().serialize(getConfigurationNode());
-            getConfigurationLoader().save(getConfigurationNode());
+            ConfigurationNode configurationNode = this.configurationLoader.createEmptyNode();
+            this.objectMapper.serialize(configurationNode);
+            this.configurationLoader.save(configurationNode);
             ClearLag.getInstance().getLogger().info("Successfully saved configuration file.");
         } catch (IOException | ObjectMappingException | RuntimeException ex) {
-            ClearLag.getInstance().getLogger().error("Encountered an error processing {}::saveConfiguration", getClass().getSimpleName(), ex);
+            ClearLag.getInstance().getLogger().error("Encountered an error while saving config", ex);
         }
     }
     
-    private ConfigurationLoader<CommentedConfigurationNode> getConfigurationLoader() {
-        return configurationLoader;
-    }
-    
-    private ObjectMapper<Config>.BoundInstance getObjectMapper() {
-        return objectMapper;
-    }
-    
-    private CommentedConfigurationNode getConfigurationNode() {
-        return configurationNode;
-    }
-    
     public Config getConfig() {
-        return config;
+        return this.objectMapper.getInstance();
     }
 }

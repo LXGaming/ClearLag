@@ -26,29 +26,22 @@ import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Optional;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Toolbox {
     
     public static Text getTextPrefix() {
         Text.Builder textBuilder = Text.builder();
         textBuilder.onHover(TextActions.showText(getPluginInformation()));
-        textBuilder.append(Text.of(TextColors.BLUE, TextStyles.BOLD, "[", Reference.PLUGIN_NAME, "]"));
+        textBuilder.append(Text.of(TextColors.BLUE, TextStyles.BOLD, "[", Reference.NAME, "]"));
         return Text.of(textBuilder.build(), TextStyles.RESET, " ");
     }
     
     public static Text getPluginInformation() {
         Text.Builder textBuilder = Text.builder();
-        textBuilder.append(Text.of(TextColors.BLUE, TextStyles.BOLD, Reference.PLUGIN_NAME, Text.NEW_LINE));
-        textBuilder.append(Text.of("    ", TextColors.DARK_GRAY, "Version: ", TextColors.WHITE, Reference.PLUGIN_VERSION, Text.NEW_LINE));
+        textBuilder.append(Text.of(TextColors.BLUE, TextStyles.BOLD, Reference.NAME, Text.NEW_LINE));
+        textBuilder.append(Text.of("    ", TextColors.DARK_GRAY, "Version: ", TextColors.WHITE, Reference.VERSION, Text.NEW_LINE));
         textBuilder.append(Text.of("    ", TextColors.DARK_GRAY, "Authors: ", TextColors.WHITE, Reference.AUTHORS, Text.NEW_LINE));
         textBuilder.append(Text.of("    ", TextColors.DARK_GRAY, "Source: ", TextColors.BLUE, getURLTextAction(Reference.SOURCE), Reference.SOURCE, Text.NEW_LINE));
         textBuilder.append(Text.of("    ", TextColors.DARK_GRAY, "Website: ", TextColors.BLUE, getURLTextAction(Reference.WEBSITE), Reference.WEBSITE));
@@ -140,29 +133,5 @@ public class Toolbox {
         } catch (Exception ex) {
             return Optional.empty();
         }
-    }
-    
-    @SafeVarargs
-    public static <E> ArrayList<E> newArrayList(E... elements) {
-        return Stream.of(elements).collect(Collectors.toCollection(ArrayList::new));
-    }
-    
-    @SafeVarargs
-    public static <E> HashSet<E> newHashSet(E... elements) {
-        return Stream.of(elements).collect(Collectors.toCollection(HashSet::new));
-    }
-    
-    @SafeVarargs
-    public static <E> LinkedBlockingQueue<E> newLinkedBlockingQueue(E... elements) {
-        return Stream.of(elements).collect(Collectors.toCollection(LinkedBlockingQueue::new));
-    }
-    
-    @SafeVarargs
-    public static <E> LinkedHashSet<E> newLinkedHashSet(E... elements) {
-        return Stream.of(elements).collect(Collectors.toCollection(LinkedHashSet::new));
-    }
-    
-    public static <K, V> HashMap<K, V> newHashMap() {
-        return new HashMap<>();
     }
 }

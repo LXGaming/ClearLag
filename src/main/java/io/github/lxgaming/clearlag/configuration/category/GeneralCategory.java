@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Alex Thomson
+ * Copyright 2019 Alex Thomson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
-package io.github.lxgaming.clearlag.util;
+package io.github.lxgaming.clearlag.configuration.category;
 
-public class Reference {
+import ninja.leaping.configurate.objectmapping.Setting;
+import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
+
+@ConfigSerializable
+public class GeneralCategory {
     
-    public static final String ID = "clearlag";
-    public static final String NAME = "ClearLag";
-    public static final String VERSION = "1.12.2-2.0.0";
-    public static final String DESCRIPTION = "Entity removal plugin for Sponge";
-    public static final String AUTHORS = "LX_Gaming";
-    public static final String SOURCE = "https://github.com/LXGaming/ClearLag";
-    public static final String WEBSITE = "https://lxgaming.github.io/";
+    @Setting(value = "debug", comment = "For debugging purposes")
+    private boolean debug = false;
+    
+    public boolean isDebug() {
+        return debug;
+    }
+    
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
 }

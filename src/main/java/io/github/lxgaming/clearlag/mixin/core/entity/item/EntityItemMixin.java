@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Alex Thomson
+ * Copyright 2019 Alex Thomson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,47 +17,37 @@
 package io.github.lxgaming.clearlag.mixin.core.entity.item;
 
 import io.github.lxgaming.clearlag.ClearLag;
-import io.github.lxgaming.clearlag.managers.ClearManager;
-import io.github.lxgaming.clearlag.mixin.core.entity.MixinEntity;
+import io.github.lxgaming.clearlag.bridge.entity.EntityBridge;
+import io.github.lxgaming.clearlag.manager.ClearManager;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.item.ItemStack;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(value = EntityItem.class, priority = 1337)
-public abstract class MixinEntityItem extends MixinEntity implements Item {
-    
-    @Shadow
-    public abstract ItemStack getItem();
+public abstract class EntityItemMixin implements Item, EntityBridge {
     
     @Override
-    public void clearlag$removeEntity() {
+    public void bridge$removeEntity() {
         if (!ClearManager.getItemClearData().getRemoving().get()) {
             return;
         }
         
-        /*
-        // EntityItem is never updated apparently :(
-        // https://github.com/SpongePowered/SpongeCommon/issues/1899
-        
-        if (isInConstructPhase()) {
-            ClearLag.getInstance().debugMessage("{} is in construction phase", getType().getId());
+        if (bridge$isConstructing()) {
+            ClearLag.getInstance().debug("{} is in construction phase", getType().getId());
             return;
         }
-        */
         
         if (isRemoved()) {
-            ClearLag.getInstance().debugMessage("{} is already dead", getItemType().getId());
+            ClearLag.getInstance().debug("{} is already dead", getItemType().getId());
             return;
         }
         
         if (ClearManager.getTristate(ClearManager.getItemClearData(), getItemType(), get(Keys.REPRESENTED_ITEM).orElse(ItemStackSnapshot.NONE)).asBoolean()) {
             remove();
             ClearManager.getItemClearData().getRemoved().add(getItemType());
-            ClearLag.getInstance().debugMessage("{} removed", getItemType().getId());
+            ClearLag.getInstance().debug("{} removed", getItemType().getId());
         }
     }
 }

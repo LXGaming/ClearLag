@@ -14,15 +14,24 @@
  * limitations under the License.
  */
 
-package io.github.lxgaming.clearlag.util;
+package io.github.lxgaming.clearlag.service;
 
-public class Reference {
+import io.github.lxgaming.clearlag.ClearLag;
+import org.spongepowered.api.scheduler.Task;
+
+import java.util.function.Consumer;
+
+public abstract class AbstractService implements Consumer<Task> {
     
-    public static final String ID = "clearlag";
-    public static final String NAME = "ClearLag";
-    public static final String VERSION = "1.12.2-2.0.0";
-    public static final String DESCRIPTION = "Entity removal plugin for Sponge";
-    public static final String AUTHORS = "LX_Gaming";
-    public static final String SOURCE = "https://github.com/LXGaming/ClearLag";
-    public static final String WEBSITE = "https://lxgaming.github.io/";
+    @Override
+    public void accept(Task task) {
+        try {
+            execute();
+        } catch (Exception ex) {
+            ClearLag.getInstance().getLogger().error("Encountered an error while executing {}", getClass().getSimpleName(), ex);
+            task.cancel();
+        }
+    }
+    
+    public abstract void execute() throws Exception;
 }

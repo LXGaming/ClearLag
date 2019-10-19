@@ -16,28 +16,25 @@
 
 package io.github.lxgaming.clearlag.configuration;
 
-import io.github.lxgaming.clearlag.configuration.categories.TypeCategory;
+import io.github.lxgaming.clearlag.configuration.category.GeneralCategory;
+import io.github.lxgaming.clearlag.configuration.category.TypeCategory;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 @ConfigSerializable
 public class Config {
     
-    @Setting(value = "debug", comment = "For debugging purposes")
-    private boolean debug = false;
+    @Setting(value = "general")
+    private GeneralCategory generalCategory = new GeneralCategory();
     
-    @Setting(value = "entities", comment = "No description provided")
+    @Setting(value = "entities")
     private TypeCategory entityCategory = new TypeCategory();
     
-    @Setting(value = "items", comment = "No description provided")
+    @Setting(value = "items")
     private TypeCategory itemCategory = new TypeCategory();
     
-    public boolean isDebug() {
-        return debug;
-    }
-    
-    public void setDebug(boolean debug) {
-        this.debug = debug;
+    public GeneralCategory getGeneralCategory() {
+        return generalCategory;
     }
     
     public TypeCategory getEntityCategory() {

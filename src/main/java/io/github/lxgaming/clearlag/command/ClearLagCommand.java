@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.lxgaming.clearlag.commands;
+package io.github.lxgaming.clearlag.command;
 
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;

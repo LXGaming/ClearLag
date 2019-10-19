@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package io.github.lxgaming.clearlag.configuration.categories;
+package io.github.lxgaming.clearlag.configuration.category;
 
+import com.google.common.collect.Sets;
 import io.github.lxgaming.clearlag.util.Broadcast;
-import io.github.lxgaming.clearlag.util.Toolbox;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
@@ -42,7 +42,7 @@ public class MessageCategory {
     private String warning = "&f[NAME] will be cleared in &b&l[TIME]";
     
     @Setting(value = "warning-intervals", comment = "Warning message intervals")
-    private Set<Long> warningIntervals = Toolbox.newHashSet(60000L, 30000L, 15000L, 5000L);
+    private Set<Long> warningIntervals = Sets.newHashSet(60000L, 30000L, 15000L, 5000L);
     
     @Setting(value = "warning-type", comment = "Chat type [ACTION_BAR, CHAT, CONSOLE, SYSTEM]")
     private Broadcast.Type warningType = Broadcast.Type.ACTION_BAR;

@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package io.github.lxgaming.clearlag.commands;
+package io.github.lxgaming.clearlag.command;
 
-import io.github.lxgaming.clearlag.managers.CommandManager;
+import com.google.common.collect.Lists;
+import io.github.lxgaming.clearlag.manager.CommandManager;
 import io.github.lxgaming.clearlag.util.Reference;
 import io.github.lxgaming.clearlag.util.Toolbox;
 import org.apache.commons.lang3.StringUtils;
@@ -38,7 +39,7 @@ public class HelpCommand extends AbstractCommand {
     
     @Override
     public CommandResult execute(CommandSource commandSource, List<String> arguments) {
-        Optional<AbstractCommand> abstractCommand = CommandManager.getCommand(Toolbox.newArrayList(Reference.PLUGIN_ID));
+        Optional<AbstractCommand> abstractCommand = CommandManager.getCommand(Lists.newArrayList(Reference.ID));
         if (!abstractCommand.isPresent()) {
             return CommandResult.success();
         }
@@ -50,10 +51,10 @@ public class HelpCommand extends AbstractCommand {
             }
             
             Text.Builder textBuilder = Text.builder();
-            textBuilder.onClick(TextActions.suggestCommand("/" + Reference.PLUGIN_ID + " " + command.getPrimaryAlias().orElse("unknown")));
+            textBuilder.onClick(TextActions.suggestCommand("/" + Reference.ID + " " + command.getPrimaryAlias().orElse("unknown")));
             textBuilder.onHover(TextActions.showText(buildDescription(command)));
             textBuilder.append(Text.of(TextColors.BLUE, "> "));
-            textBuilder.append(Text.of(TextColors.GREEN, "/", Reference.PLUGIN_ID, " ", command.getPrimaryAlias().orElse("unknown")));
+            textBuilder.append(Text.of(TextColors.GREEN, "/", Reference.ID, " ", command.getPrimaryAlias().orElse("unknown")));
             if (StringUtils.isNotBlank(command.getUsage())) {
                 textBuilder.append(Text.of(" ", TextColors.GREEN, command.getUsage()));
             }
@@ -70,7 +71,7 @@ public class HelpCommand extends AbstractCommand {
         textBuilder.append(Text.NEW_LINE);
         textBuilder.append(Text.of(TextColors.AQUA, "Description: ", TextColors.DARK_GREEN, StringUtils.defaultIfBlank(command.getDescription(), "No description provided")));
         textBuilder.append(Text.NEW_LINE);
-        textBuilder.append(Text.of(TextColors.AQUA, "Usage: ", TextColors.DARK_GREEN, "/", Reference.PLUGIN_ID, " ", command.getPrimaryAlias().orElse("unknown")));
+        textBuilder.append(Text.of(TextColors.AQUA, "Usage: ", TextColors.DARK_GREEN, "/", Reference.ID, " ", command.getPrimaryAlias().orElse("unknown")));
         if (StringUtils.isNotBlank(command.getUsage())) {
             textBuilder.append(Text.of(" ", TextColors.DARK_GREEN, command.getUsage()));
         }

@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package io.github.lxgaming.clearlag.managers;
+package io.github.lxgaming.clearlag.manager;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import io.github.lxgaming.clearlag.ClearLag;
 import io.github.lxgaming.clearlag.configuration.Config;
-import io.github.lxgaming.clearlag.configuration.categories.TypeCategory;
+import io.github.lxgaming.clearlag.configuration.category.TypeCategory;
 import io.github.lxgaming.clearlag.data.CatalogData;
 import io.github.lxgaming.clearlag.data.ClearData;
 import io.github.lxgaming.clearlag.util.Reference;
-import io.github.lxgaming.clearlag.util.Toolbox;
 import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.CatalogTypes;
@@ -42,8 +42,8 @@ import java.util.Optional;
 
 public final class ClearManager {
     
-    private static final ClearData ENTITY_CLEAR_DATA = ClearData.of(Reference.PLUGIN_ID + ":entity", "Entities", CatalogTypes.ENTITY_TYPE, Config::getEntityCategory);
-    private static final ClearData ITEM_CLEAR_DATA = ClearData.of(Reference.PLUGIN_ID + ":item", "Items", CatalogTypes.ITEM_TYPE, Config::getItemCategory);
+    private static final ClearData ENTITY_CLEAR_DATA = ClearData.of(Reference.ID + ":entity", "Entities", CatalogTypes.ENTITY_TYPE, Config::getEntityCategory);
+    private static final ClearData ITEM_CLEAR_DATA = ClearData.of(Reference.ID + ":item", "Items", CatalogTypes.ITEM_TYPE, Config::getItemCategory);
     private static final Collection<CatalogType> EXCLUDED_CATALOG_TYPES = ImmutableSet.of(EntityTypes.ITEM, EntityTypes.PLAYER);
     
     public static void updatePre(ClearData clearData) {
@@ -105,7 +105,7 @@ public final class ClearManager {
         }
         
         if (typeCategory.isIgnoreNamed() && valueContainer.get(Keys.DISPLAY_NAME).isPresent()) {
-            ClearLag.getInstance().debugMessage("Ignoring named - {}", catalogType.getId());
+            ClearLag.getInstance().debug("Ignoring named - {}", catalogType.getId());
             return Tristate.UNDEFINED;
         }
         
@@ -118,7 +118,7 @@ public final class ClearManager {
     }
     
     private static Tristate getTristate(TypeCategory typeCategory, CatalogData catalogData) {
-        Map<String, Tristate> results = Toolbox.newHashMap();
+        Map<String, Tristate> results = Maps.newHashMap();
         for (Map.Entry<String, Tristate> entry : typeCategory.getTypes().entrySet()) {
             if (entry.getValue() == Tristate.UNDEFINED) {
                 continue;

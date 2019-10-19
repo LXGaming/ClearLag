@@ -14,25 +14,32 @@
  * limitations under the License.
  */
 
-package io.github.lxgaming.clearlag.commands;
+package io.github.lxgaming.clearlag.command;
 
+import io.github.lxgaming.clearlag.ClearLag;
 import io.github.lxgaming.clearlag.util.Toolbox;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import java.util.List;
 
-public class InfoCommand extends AbstractCommand {
+public class ReloadCommand extends AbstractCommand {
     
-    public InfoCommand() {
-        addAlias("info");
-        addAlias("information");
-        addAlias("version");
+    public ReloadCommand() {
+        addAlias("reload");
+        setPermission("clearlag.command.reload");
     }
     
     @Override
     public CommandResult execute(CommandSource commandSource, List<String> arguments) {
-        commandSource.sendMessage(Toolbox.getPluginInformation());
+        if (ClearLag.getInstance().reload()) {
+            commandSource.sendMessage(Text.of(Toolbox.getTextPrefix(), TextColors.GREEN, "Configuration reloaded"));
+        } else {
+            commandSource.sendMessage(Text.of(Toolbox.getTextPrefix(), TextColors.RED, "An error occurred. Please check the console."));
+        }
+        
         return CommandResult.success();
     }
 }

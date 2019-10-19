@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package io.github.lxgaming.clearlag.commands;
+package io.github.lxgaming.clearlag.command;
 
-import io.github.lxgaming.clearlag.managers.CommandManager;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import io.github.lxgaming.clearlag.manager.CommandManager;
 import io.github.lxgaming.clearlag.util.Reference;
-import io.github.lxgaming.clearlag.util.Toolbox;
 import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
@@ -35,8 +36,8 @@ import java.util.Set;
 
 public abstract class AbstractCommand implements CommandCallable {
     
-    private final Set<String> aliases = Toolbox.newLinkedHashSet();
-    private final Set<AbstractCommand> children = Toolbox.newLinkedHashSet();
+    private final Set<String> aliases = Sets.newLinkedHashSet();
+    private final Set<AbstractCommand> children = Sets.newLinkedHashSet();
     private String description;
     private String permission;
     private String usage;
@@ -45,12 +46,12 @@ public abstract class AbstractCommand implements CommandCallable {
     
     @Override
     public final CommandResult process(CommandSource commandSource, String arguments) throws CommandException {
-        return CommandManager.process(this, commandSource, arguments);
+        return CommandManager.execute(this, commandSource, arguments);
     }
     
     @Override
     public final List<String> getSuggestions(CommandSource commandSource, String arguments, Location<World> targetPosition) throws CommandException {
-        return Toolbox.newArrayList();
+        return Lists.newArrayList();
     }
     
     @Override
@@ -69,7 +70,7 @@ public abstract class AbstractCommand implements CommandCallable {
     
     @Override
     public final Optional<Text> getHelp(CommandSource commandSource) {
-        return Optional.of(Text.of(TextColors.BLUE, "Use ", TextColors.GREEN, "/", Reference.PLUGIN_ID, " help ", TextColors.BLUE, "to view available commands."));
+        return Optional.of(Text.of(TextColors.BLUE, "Use ", TextColors.GREEN, "/", Reference.ID, " help ", TextColors.BLUE, "to view available commands."));
     }
     
     @Override

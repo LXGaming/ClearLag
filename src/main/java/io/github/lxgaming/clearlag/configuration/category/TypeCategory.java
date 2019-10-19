@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.github.lxgaming.clearlag.configuration.categories;
+package io.github.lxgaming.clearlag.configuration.category;
 
-import io.github.lxgaming.clearlag.util.Toolbox;
+import com.google.common.collect.Maps;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 import org.spongepowered.api.util.Tristate;
@@ -45,7 +45,7 @@ public class TypeCategory {
             "\nFALSE - Type will not be removed" +
             "\nTRUE - Type will be removed" +
             "\nUNDEFINED - Fallback to default-value")
-    private Map<String, Tristate> types = Toolbox.newHashMap();
+    private Map<String, Tristate> types = Maps.newHashMap();
     
     public boolean isAutoPopulate() {
         return autoPopulate;

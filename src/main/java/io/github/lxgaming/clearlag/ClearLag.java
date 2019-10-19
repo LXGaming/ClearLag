@@ -17,13 +17,12 @@
 package io.github.lxgaming.clearlag;
 
 import com.google.inject.Inject;
-import io.github.lxgaming.clearlag.commands.ClearLagCommand;
 import io.github.lxgaming.clearlag.configuration.Config;
 import io.github.lxgaming.clearlag.configuration.Configuration;
-import io.github.lxgaming.clearlag.managers.ClearManager;
-import io.github.lxgaming.clearlag.managers.CommandManager;
-import io.github.lxgaming.clearlag.managers.ServiceManager;
-import io.github.lxgaming.clearlag.services.ClearService;
+import io.github.lxgaming.clearlag.configuration.category.GeneralCategory;
+import io.github.lxgaming.clearlag.manager.ClearManager;
+import io.github.lxgaming.clearlag.manager.CommandManager;
+import io.github.lxgaming.clearlag.service.ClearService;
 import io.github.lxgaming.clearlag.util.Reference;
 import org.slf4j.Logger;
 import org.spongepowered.api.config.DefaultConfig;
@@ -35,14 +34,16 @@ import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.scheduler.Task;
 
 import java.nio.file.Path;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Plugin(
-        id = Reference.PLUGIN_ID,
-        name = Reference.PLUGIN_NAME,
-        version = Reference.PLUGIN_VERSION,
+        id = Reference.ID,
+        name = Reference.NAME,
+        version = Reference.VERSION,
         description = Reference.DESCRIPTION,
         authors = {Reference.AUTHORS},
         url = Reference.WEBSITE
@@ -64,41 +65,54 @@ public class ClearLag {
     private Configuration configuration;
     
     @Listener
-    public void onGameConstruction(GameConstructionEvent event) {
+    public void onConstruction(GameConstructionEvent event) {
         instance = this;
-        configuration = new Configuration(getPath());
+        configuration = new Configuration(this.path);
     }
     
     @Listener
-    public void onGameInitialization(GameInitializationEvent event) {
-        CommandManager.registerCommand(ClearLagCommand.class);
+    public void onInitialization(GameInitializationEvent event) {
+        CommandManager.prepare();
     }
     
     @Listener
-    public void onGameLoadComplete(GameLoadCompleteEvent event) {
-        reloadConfiguration();
-        ServiceManager.schedule(new ClearService());
+    public void onLoadComplete(GameLoadCompleteEvent event) {
+        if (!reload()) {
+            getLogger().error("Failed to load");
+            return;
+        }
+        
+        Task.builder()
+                .async()
+                .name(Reference.NAME)
+                .interval(1000L, TimeUnit.MILLISECONDS)
+                .execute(new ClearService())
+                .submit(getPluginContainer());
     }
     
     @Listener
-    public void onGameStartingServer(GameStartingServerEvent event) {
-        getLogger().info("{} v{} has started.", Reference.PLUGIN_NAME, Reference.PLUGIN_VERSION);
+    public void onStartingServer(GameStartingServerEvent event) {
+        getLogger().info("{} v{} has started.", Reference.NAME, Reference.VERSION);
     }
     
     @Listener
-    public void onGameStopping(GameStoppingEvent event) {
-        getLogger().info("{} v{} has stopped.", Reference.PLUGIN_NAME, Reference.PLUGIN_VERSION);
+    public void onStopping(GameStoppingEvent event) {
+        getLogger().info("{} v{} has stopped.", Reference.NAME, Reference.VERSION);
     }
     
-    public boolean reloadConfiguration() {
+    public boolean reload() {
         getConfiguration().loadConfiguration();
+        if (!getConfig().isPresent()) {
+            return false;
+        }
+        
         ClearManager.getAllClearData().forEach(ClearManager::processTypeCategory);
         getConfiguration().saveConfiguration();
-        return getConfig().isPresent();
+        return true;
     }
     
-    public void debugMessage(String format, Object... arguments) {
-        if (getConfig().map(Config::isDebug).orElse(false)) {
+    public void debug(String format, Object... arguments) {
+        if (getConfig().map(Config::getGeneralCategory).map(GeneralCategory::isDebug).orElse(false)) {
             getLogger().info(format, arguments);
         }
     }
@@ -113,10 +127,6 @@ public class ClearLag {
     
     public Logger getLogger() {
         return logger;
-    }
-    
-    public Path getPath() {
-        return path;
     }
     
     public Configuration getConfiguration() {

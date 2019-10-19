@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Alex Thomson
+ * Copyright 2019 Alex Thomson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package io.github.lxgaming.clearlag.interfaces.entity;
+package io.github.lxgaming.clearlag.bridge.entity;
 
-import org.spongepowered.common.interfaces.entity.IMixinEntity;
-
-public interface IMixinEntity_ClearLag extends IMixinEntity {
+public interface EntityBridge extends org.spongepowered.api.entity.Entity, org.spongepowered.common.bridge.entity.EntityBridge {
     
-    void removeEntity();
+    void bridge$removeEntity();
     
-    int getLastTick();
+    int bridge$getLastTick();
     
-    void setLastTick(int lastTick);
+    void bridge$setLastTick(int lastTick);
 }

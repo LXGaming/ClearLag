@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package io.github.lxgaming.clearlag.commands;
+package io.github.lxgaming.clearlag.command;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import io.github.lxgaming.clearlag.data.ClearData;
-import io.github.lxgaming.clearlag.managers.ClearManager;
+import io.github.lxgaming.clearlag.manager.ClearManager;
 import io.github.lxgaming.clearlag.util.Toolbox;
 import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.command.CommandResult;
@@ -46,7 +48,7 @@ public class ResultCommand extends AbstractCommand {
     public CommandResult execute(CommandSource commandSource, List<String> arguments) {
         if (arguments.isEmpty()) {
             if (commandSource instanceof Player) {
-                List<Text> texts = Toolbox.newArrayList();
+                List<Text> texts = Lists.newArrayList();
                 ClearManager.getAllClearData().forEach(clearData -> {
                     Text.Builder textBuilder = Text.builder();
                     textBuilder.append(Text.of(clearData.getName()));
@@ -86,12 +88,12 @@ public class ResultCommand extends AbstractCommand {
             return;
         }
         
-        Map<CatalogType, Integer> results = Toolbox.newHashMap();
+        Map<CatalogType, Integer> results = Maps.newHashMap();
         for (CatalogType catalogType : clearData.getRemoved()) {
             results.put(catalogType, results.getOrDefault(catalogType, 0) + 1);
         }
         
-        List<Text> texts = Toolbox.newArrayList();
+        List<Text> texts = Lists.newArrayList();
         results.entrySet().stream().sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).forEach((entry) -> {
             Text.Builder textBuilder = Text.builder();
             textBuilder.append(Text.of(TextColors.WHITE, TextStyles.BOLD, "x", entry.getValue()));

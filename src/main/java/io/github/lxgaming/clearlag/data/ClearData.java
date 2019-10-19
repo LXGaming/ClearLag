@@ -16,9 +16,9 @@
 
 package io.github.lxgaming.clearlag.data;
 
+import com.google.common.collect.Queues;
 import io.github.lxgaming.clearlag.configuration.Config;
-import io.github.lxgaming.clearlag.configuration.categories.TypeCategory;
-import io.github.lxgaming.clearlag.util.Toolbox;
+import io.github.lxgaming.clearlag.configuration.category.TypeCategory;
 import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.event.Order;
 
@@ -32,7 +32,7 @@ public final class ClearData {
     private final String name;
     private final Class<? extends CatalogType> catalogTypeClass;
     private final Function<Config, TypeCategory> configFunction;
-    private final BlockingQueue<CatalogType> removed = Toolbox.newLinkedBlockingQueue();
+    private final BlockingQueue<CatalogType> removed = Queues.newLinkedBlockingQueue();
     private final AtomicBoolean removing = new AtomicBoolean(false);
     private long initializeTime;
     private long interval;

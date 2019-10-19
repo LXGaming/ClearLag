@@ -30,7 +30,7 @@ archivesBaseName = "ClearLag"
 version = "2.0.0"
 
 minecraft {
-    version = "1.12.2-14.23.5.2768"
+    version = "1.12.2-14.23.5.2838"
     runDir = "run"
     mappings = "stable_39"
     makeObfSourceJar = false
@@ -59,8 +59,8 @@ repositories {
 }
 
 dependencies {
-    annotationProcessor("org.spongepowered:spongecommon:7.1.0-SNAPSHOT:dev")
-    provided("org.spongepowered:spongecommon:7.1.0-SNAPSHOT:dev")
+    annotationProcessor("org.spongepowered:spongecommon:1.12.2-7.1.7-20190912.171053-179:dev")
+    provided("org.spongepowered:spongecommon:1.12.2-7.1.7-20190912.171053-179:dev")
 }
 
 jar {
@@ -69,7 +69,8 @@ jar {
                 "FMLCorePluginContainsFMLMod": true,
                 "ForceLoadAsMod": true,
                 "MixinConfigs": "mixins.clearlag.core.json",
-                "TweakClass": "org.spongepowered.asm.launch.MixinTweaker"
+                "TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
+                "TweakOrder": 0
         )
     }
 
